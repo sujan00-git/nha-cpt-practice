@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Personalized Test — NHA CPT (From Your Study Materials)</title>
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --primary: #7a1f5b;
+    --primary-dark: #591043;
+    --accent: #0b8a5a;
+    --wrong: #c0392b;
+    --right: #1e8449;
+    --muted: #6b7280;
+    --border: #e2e6ee;
+    --section-blood: #c62828;
+    --section-test: #1565c0;
+    --section-heart: #ad1457;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: #222;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 22px 24px;
+    border-radius: 10px 10px 0 0;
+  }
+  header h1 { margin: 0; font-size: 24px; }
+  header .meta { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+  .toolbar {
+    background: #fff;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button:hover { background: var(--primary-dark); }
+  button.secondary {
+    background: #fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+  }
+  button.secondary:hover { background: #f6ecf1; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .progress { margin-left: auto; font-size: 14px; color: var(--muted); }
+  main {
+    background: var(--card);
+    padding: 0;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    min-height: 400px;
+    overflow: hidden;
+  }
+  .section {
+    border-bottom: 2px solid var(--border);
+    padding: 0;
+  }
+  .section:last-child { border-bottom: none; }
+  .section-head {
+    padding: 14px 24px;
+    color: white;
+    font-weight: 700;
+    font-size: 17px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-head.blood { background: var(--section-blood); }
+  .section-head.test { background: var(--section-test); }
+  .section-head.heart { background: var(--section-heart); }
+  .section-head .count { font-weight: 400; opacity: 0.85; font-size: 13px; margin-left: auto; }
+  .section-body { padding: 20px 24px; }
+  .ref-img {
+    max-width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 10px 0 20px;
+    display: block;
+    cursor: zoom-in;
+  }
+  .img-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+  .img-row .ref-img { flex: 1 1 300px; margin: 0; }
+  .ref-caption {
+    font-size: 12px;
+    color: var(--muted);
+    margin: -14px 0 16px;
+    font-style: italic;
+  }
+  .question {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .question:last-child { border-bottom: none; }
+  .q-header { display: flex; gap: 10px; margin-bottom: 8px; }
+  .q-num { font-weight: 700; color: var(--primary); min-width: 40px; }
+  .q-text { font-weight: 500; }
+  .options { margin: 8px 0 0 48px; }
+  .option {
+    display: block;
+    padding: 7px 11px;
+    margin: 5px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .option:hover { background: #f6ecf1; }
+  .option input { margin-right: 10px; }
+  .option.correct { background: #e6f6ed; border-color: var(--right); }
+  .option.wrong { background: #fbe9e7; border-color: var(--wrong); }
+  .option.correct-missed { background: #e6f6ed; border-color: var(--right); border-style: dashed; }
+  .fill-blank input[type=text] {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 15px;
+    min-width: 170px;
+  }
+  .fill-blank input.correct { background: #e6f6ed; border-color: var(--right); }
+  .fill-blank input.wrong { background: #fbe9e7; border-color: var(--wrong); }
+  .fill-blank .answer-note {
+    display: inline-block;
+    margin-left: 10px;
+    color: var(--right);
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .fill-blank .answer-note.wrong { color: var(--wrong); }
+  .result-badge {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .result-badge.right { background: var(--right); color: #fff; }
+  .result-badge.wrong { background: var(--wrong); color: #fff; }
+  .score-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 24px;
+    text-align: center;
+    margin: 20px 24px;
+    border-radius: 10px;
+  }
+  .score-card .big { font-size: 44px; font-weight: 700; margin: 10px 0; }
+  .score-card .pass { color: #c5f6d6; }
+  .score-card .fail { color: #ffc7c0; }
+  .section-breakdown {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .section-stat {
+    background: rgba(255,255,255,0.15);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .section-stat .num { font-size: 20px; font-weight: 700; }
+  .word-bank {
+    background: #f3e9ef;
+    border-left: 3px solid var(--primary);
+    padding: 10px 14px;
+    margin: 12px 0 18px;
+    font-size: 14px;
+  }
+  .word-bank b { color: var(--primary); }
+  .footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 20px; padding: 10px; }
+  .nav-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .nav-links a {
+    color: #ffeef7;
+    text-decoration: underline;
+    font-size: 13px;
+  }
+  /* Lightbox for enlarging images */
+  .lightbox {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 100%; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Personalized Test &mdash; From Your Study Materials</h1>
+    <div class="meta">Built from your handwritten order-of-draw sheet, BD Vacutainer guide, hospital requisition, and heart diagrams.</div>
+    <div class="nav-links">
+      <a href="index.html">&larr; Index</a>
+      <a href="nha-cpt-practice1.html">Randomized Test (Page 1) &rarr;</a>
+    </div>
+  </header>
+  <div class="toolbar">
+    <button id="submitBtn">Submit &amp; Grade</button>
+    <button id="revealBtn" class="secondary" disabled>Show Answer Key</button>
+    <button id="resetBtn" class="secondary">Reset</button>
+    <span class="progress" id="progress"></span>
+  </div>
+  <main id="main">
+    <!-- Section 1: Blood Collection -->
+    <section class="section">
+      <div class="section-head blood">
+        Section 1 &mdash; Blood Collection (Order of Draw &amp; Tubes)
+        <span class="count" id="count-blood"></span>
+      </div>
+      <div class="section-body">
+        <div class="img-row">
+          <img src="Phlebotomy_questions/blood-collection-tube1.jpeg" alt="Order of Draw table" class="ref-img" onclick="openLightbox(this.src)">
+          <img src="Phlebotomy_questions/blood-collection-tube-guide.jpeg" alt="BD Vacutainer Tube Guide" class="ref-img" onclick="openLightbox(this.src)">
+        </div>
+        <div class="ref-caption">Click an image to zoom. Answer based on the charts above.</div>
+        <div id="blood-questions"></div>
+      </div>
+    </section>
+
+    <!-- Section 2: Blood Tests (Requisition) -->
+    <section class="section">
+      <div class="section-head test">
+        Section 2 &mdash; Blood Tests (from the Hospital Requisition)
+        <span class="count" id="count-test"></span>
+      </div>
+      <div class="section-body">
+        <img src="Phlebotomy_questions/bloodtest.jpeg" alt="Hospital Requisition" class="ref-img" style="max-width: 500px;" onclick="openLightbox(this.src)">
+        <div class="ref-caption">Northern Virginia Community College Hospital Requisition. Patient: Thompson, Stefanie. Click to zoom.</div>
+        <div id="test-questions"></div>
+      </div>
+    </section>
+
+    <!-- Section 3: Heart -->
+    <section class="section">
+      <div class="section-head heart">
+        Section 3 &mdash; Heart Anatomy &amp; Blood Flow (Fill-in-the-Blank)
+        <span class="count" id="count-heart"></span>
+      </div>
+      <div class="section-body">
+        <div class="img-row">
+          <img src="Phlebotomy_questions/heart1.jpeg" alt="Heart diagram labels 1-6" class="ref-img" onclick="openLightbox(this.src)">
+          <img src="Phlebotomy_questions/heart2.jpeg" alt="Blood Flow of the Heart worksheet" class="ref-img" onclick="openLightbox(this.src)">
+        </div>
+        <div class="ref-caption">Numbers 1-6 refer to the labeled points on the heart diagram (left image). Click to zoom.</div>
+
+        <div class="word-bank">
+          <b>Word Bank (for the blood-flow blanks):</b>
+          left &middot; right &middot; left atrium &middot; right atrium &middot; left ventricle &middot; right ventricle &middot;
+          oxygenated &middot; deoxygenated &middot; tricuspid valve &middot; bicuspid valve &middot;
+          pulmonary artery &middot; pulmonary vein &middot; aorta &middot; body &middot; capillary beds &middot; lung(s) &middot; oxygen
+        </div>
+
+        <div id="heart-labels"></div>
+        <div id="heart-flow"></div>
+      </div>
+    </section>
+  </main>
+  <div class="footer">Personalized study aid. Click images to zoom. &mdash; Built from Amena's study materials.</div>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<script>
+// ============================================================
+// SECTION 1: Blood Collection questions (multiple choice)
+// Based on the "Order of Draw for Blood Collection Tubes" chart
+// and the BD Vacutainer Tube Guide
+// ============================================================
+const BLOOD_QUESTIONS = [
+  { q:"According to your order-of-draw chart, which tube is drawn FIRST?",
+    choices:["Light blue (Sodium Citrate)","Sterile Yellow / Blood Culture Bottles (SPS)","Lavender (EDTA)","Gray"], a:1 },
+  { q:"The light blue tube (position #2) contains which additive?",
+    choices:["EDTA","Sodium Citrate","Lithium Heparin","Sodium Fluoride"], a:1 },
+  { q:"The light blue tube is used for which tests?",
+    choices:["CBC and H&H","PT, PT/INR, APTT","Blood Culture","Glucose Tolerance Test"], a:1 },
+  { q:"How many inversions are required for the light blue (citrate) tube?",
+    choices:["3-4","5-6","8-10","15-20"], a:0 },
+  { q:"Why must a light blue tube be completely filled?",
+    choices:["To preserve glucose","To maintain the 9:1 blood-to-anticoagulant ratio","To prevent light exposure","To prevent clotting"], a:1 },
+  { q:"When drawing light blue via butterfly as the FIRST tube, you should:",
+    choices:["Skip it","Use a discard tube first","Draw it slowly","Fill it only halfway"], a:1 },
+  { q:"Red (glass) tubes contain which additive?",
+    choices:["None","Clot activator silica","EDTA","Heparin"], a:0 },
+  { q:"Red (plastic), Gold, Tiger, SST, Speckled or Mottled top tubes contain:",
+    choices:["EDTA","Sodium Citrate","Clot activator (silica) with or without gel separator","Lithium Heparin"], a:2 },
+  { q:"Serum chemistry tests (BMP, CMP, TSH, PSA, Lipid Panel, Hepatic Function Panel) use which tube?",
+    choices:["Light blue","Lavender","Red / Gold / SST","Gray"], a:2 },
+  { q:"How long must a glass red top be allowed to clot before centrifugation?",
+    choices:["At least 15 minutes","At least 30 minutes","At least 60 minutes","At least 2 hours"], a:2 },
+  { q:"The maximum time after clotting (before centrifugation) for a serum tube is:",
+    choices:["30 minutes","1 hour","2 hours","4 hours"], a:2 },
+  { q:"Bilirubin specimens must be:",
+    choices:["Transported on ice","Protected from light","Shaken vigorously","Centrifuged immediately"], a:1 },
+  { q:"The green tube contains which additive?",
+    choices:["EDTA","Sodium Citrate","Heparin (sodium, lithium, or ammonium)","ACD"], a:2 },
+  { q:"Which tests go in the green (heparin) tube?",
+    choices:["Blood Culture","STAT Chemistry (plasma), Ammonia, Blood Gases, Lactic Acid","PT/INR","Blood Alcohol Level"], a:1 },
+  { q:"Which specimens must be transported on ice (per your chart)?",
+    choices:["CBC and Blood Type","Ammonia, Blood Gases, and Lactic Acid","Glucose and Cholesterol","PSA and TSH"], a:1 },
+  { q:"Lavender (purple), Pink, and White (pearl) PPT tubes contain which additive?",
+    choices:["Sodium Citrate","EDTA","Heparin","ACD"], a:1 },
+  { q:"CBC, CBC/diff, H&H, HgbA1C, and ESR are collected in which tube?",
+    choices:["Light blue","Lavender (EDTA)","Red","Gray"], a:1 },
+  { q:"Blood typing is performed in which department using which tube?",
+    choices:["Hematology / Lavender","Blood Bank / Pink or Lavender (EDTA)","Chemistry / Green","Microbiology / Yellow"], a:1 },
+  { q:"Which tubes require an additional label per your chart?",
+    choices:["Light blue tubes","Gray tubes","Blood Bank tubes","Yellow ACD tubes"], a:2 },
+  { q:"The gray tube contains which additives?",
+    choices:["Sodium Fluoride (preservative) and Potassium Oxalate (anticoagulant)","EDTA","Clot activator","Heparin"], a:0 },
+  { q:"Which tests go in the gray tube?",
+    choices:["PT/INR","Glucose Tolerance Test (GTT), Blood Alcohol Level (BAC), Lactic Acid","CBC","Blood Culture"], a:1 },
+  { q:"The Yellow (ACD) tube (position #7 on your chart) is used for:",
+    choices:["Blood Culture","STAT Chemistry","Special Blood Bank Testing (e.g., paternity, HLA)","Coagulation"], a:2 },
+  { q:"Paternity testing must follow:",
+    choices:["Standard protocol","Chain of custody","No special protocol","Fasting requirements"], a:1 },
+  { q:"How many inversions does the Lavender (EDTA) tube require?",
+    choices:["3-4","5-6","8-10","None"], a:2 },
+  { q:"How many inversions does the Gray tube require?",
+    choices:["3-4","5-6","8-10","None"], a:2 },
+  { q:"How many inversions does the Yellow (ACD) tube require?",
+    choices:["3-4","5-6","8-10","None"], a:2 },
+  { q:"When using a butterfly for blood cultures, which bottle should be collected FIRST?",
+    choices:["Anaerobic bottle","Aerobic bottle","Either, no preference","Both simultaneously"], a:1 },
+  { q:"Blood cultures must be collected using:",
+    choices:["Clean technique","Sterile procedure","Standard precautions only","No special technique"], a:1 },
+  { q:"According to the BD guide, the Royal Blue tube is used for:",
+    choices:["CBC","Trace-element, toxicology, and nutritional-chemistry determinations","Blood Culture","Coagulation"], a:1 },
+  { q:"According to the BD guide, the Tan tube is certified to contain less than .01 µg/mL of what element?",
+    choices:["Mercury","Lead","Iron","Zinc"], a:1 },
+  { q:"According to the BD guide, the White tube (K2EDTA with gel) is used for:",
+    choices:["Routine CBC","Molecular diagnostic test methods (PCR, bDNA)","Coagulation","Blood Culture"], a:1 },
+  { q:"According to the BD guide, the Clear tube (no additive) is used for:",
+    choices:["Routine chemistry","Discard tube or secondary specimen tube","Blood Culture","Hematology"], a:1 },
+  { q:"According to the BD guide, the Orange tube additive is:",
+    choices:["EDTA","Thrombin-based clot activator","Sodium citrate","Sodium heparin"], a:1 },
+  { q:"The Orange tube is used for which type of serum determinations?",
+    choices:["Routine","STAT (5-minute clot time)","Fasting only","Pediatric only"], a:1 },
+];
+
+// ============================================================
+// SECTION 2: Blood Test questions (from the requisition form)
+// ============================================================
+const TEST_QUESTIONS = [
+  { q:"On the requisition, 'Fasting' is marked YES. Which test on this requisition MOST requires fasting?",
+    choices:["CBC","Glucose (serum)","PSA","TSH"], a:1 },
+  { q:"The requisition shows CBC/DIFF marked. Which tube do you use for a CBC/DIFF?",
+    choices:["Light blue (citrate)","Lavender (EDTA)","Gold / SST","Gray"], a:1 },
+  { q:"BMP is marked on the requisition. What is BMP?",
+    choices:["Basic Metabolic Panel","Blood Measurement Protocol","Bone Marrow Panel","Blood Monitoring Panel"], a:0 },
+  { q:"The requisition shows 'Glucose' labeled with 'Gold' handwritten next to it. The Gold tube indicates:",
+    choices:["Serum (SST) - for a serum glucose","EDTA whole blood","Light blue plasma","Yellow culture"], a:0 },
+  { q:"The requisition shows 'Type & Screen' labeled 'pink'. The pink tube additive is:",
+    choices:["Sodium citrate","Clot activator","K2EDTA (for blood bank)","Lithium heparin"], a:2 },
+  { q:"PT/INR is marked. Which tube is required?",
+    choices:["Lavender","Light blue (sodium citrate)","Green","Yellow"], a:1 },
+  { q:"APTT is marked. Which tube is required?",
+    choices:["Lavender","Light blue (sodium citrate)","Red","Gray"], a:1 },
+  { q:"Hepatic Function Panel is marked. Which tube is used?",
+    choices:["Lavender","Red / Gold / SST (serum)","Light blue","Yellow"], a:1 },
+  { q:"Bilirubin is marked. What special handling does this specimen require?",
+    choices:["On ice","Protected from light","Frozen immediately","Shaken vigorously"], a:1 },
+  { q:"UA was marked with 'urin cup' / 'sterile urin cup' annotated. What does UA stand for?",
+    choices:["Universal Analysis","Urinalysis","Unit Assessment","Urea Antibody"], a:1 },
+  { q:"The requisition notes 'sterile urin cup' for Urine Culture. Why sterile?",
+    choices:["To preserve glucose","To avoid contamination of the culture specimen","To cool the sample","To absorb odor"], a:1 },
+  { q:"The requisition notes 'culture swab' for Throat Culture. The MOST appropriate collection method is:",
+    choices:["Swab the tongue","Swab the posterior pharynx and tonsils","Rinse with saline","Collect saliva"], a:1 },
+  { q:"The requisition notes 'stool test card on kit' for FOB. What does FOB stand for?",
+    choices:["Fasting Of Blood","Fecal Occult Blood","Full Organ Battery","Final Organ Blood"], a:1 },
+  { q:"Stool Culture is marked with 'stool container'. The container MUST be:",
+    choices:["Sterile","Refrigerated during collection","Taped shut","All of the above"], a:0 },
+  { q:"The time of draw on the requisition is 20:35. In standard (12-hour) time, this is:",
+    choices:["8:35 AM","2:35 PM","8:35 PM","10:35 PM"], a:2 },
+  { q:"H&H on the requisition stands for:",
+    choices:["Hepatic and Heart","Hemoglobin and Hematocrit","Hematology and Histology","HDL and HCG"], a:1 },
+  { q:"HgbA1C on the requisition measures:",
+    choices:["Current blood sugar","Average blood glucose over 2-3 months","Hemoglobin level only","Iron level"], a:1 },
+  { q:"CMP on the requisition includes everything in BMP PLUS:",
+    choices:["Only PT/INR","Liver function tests, total protein, albumin, bilirubin","Only CBC","Only lipids"], a:1 },
+  { q:"BAC on the requisition stands for:",
+    choices:["Basic Antigen Count","Blood Alcohol Concentration","Blood Antibody Count","Baseline Antigen Capture"], a:1 },
+  { q:"BAC must be collected in which tube and with what special site-prep?",
+    choices:["Gray tube; non-alcohol antiseptic","Lavender; alcohol prep","Red tube; iodine only","Light blue; soap and water only"], a:0 },
+  { q:"GTT on the requisition stands for:",
+    choices:["Glucose Tolerance Test","General Thyroid Test","Growth Thyroxine Test","Glycated Troponin Test"], a:0 },
+  { q:"Arterial Blood Gases on the requisition would NOT be collected by a routine phlebotomist from which site?",
+    choices:["Radial artery","Antecubital vein (ABG requires arterial)","Brachial artery","Femoral artery"], a:1 },
+  { q:"HCG on the requisition is used primarily for:",
+    choices:["Thyroid screening","Pregnancy testing (and some tumors)","Cardiac screening","Allergy testing"], a:1 },
+  { q:"PSA on the requisition is a screening marker for:",
+    choices:["Prostate conditions","Pancreatic disease","Pulmonary disease","Platelet function"], a:0 },
+  { q:"Lipid Panel is listed. It includes:",
+    choices:["Only cholesterol","Total cholesterol, HDL, LDL, and triglycerides","Only triglycerides","Only HDL"], a:1 },
+  { q:"Ammonia is listed. How must it be transported?",
+    choices:["On ice","Warm","Room temp","Frozen"], a:0 },
+  { q:"Lactic Acid is listed. How must it be transported?",
+    choices:["On ice","Warm","Room temp","Frozen"], a:0 },
+  { q:"Renal Panel includes BUN and Creatinine. These tests assess:",
+    choices:["Liver function","Kidney function","Heart function","Thyroid function"], a:1 },
+  { q:"ALT and AST (marked under the Hepatic Function Panel section) assess:",
+    choices:["Kidney","Liver","Heart","Lung"], a:1 },
+  { q:"TSH is a test of:",
+    choices:["Thyroid function","Testosterone","Toxic substances","Total hemoglobin"], a:0 },
+  { q:"If drawing all the marked tests on this requisition, what is the correct order of draw for the tubes involved (Pink, Lavender, Gold, Light Blue)?",
+    choices:["Pink, Gold, Lavender, Light Blue","Light Blue, Gold, Lavender, Pink","Light Blue, Gold, Pink (both EDTA ok), Lavender","Lavender, Pink, Gold, Light Blue"], a:2 },
+  { q:"The two patient identifiers typically used from a requisition like this are:",
+    choices:["Name and room number","Full name (Thompson, Stefanie) and DOB (10/08/1982) or MRN (14321)","Only name","Only MRN"], a:1 },
+];
+
+// ============================================================
+// SECTION 3a: Heart diagram labels (positions 1-6)
+// Based on heart1.jpeg which shows a labeled interior heart with
+// 6 circles marking the four chambers and valves
+// ============================================================
+const HEART_LABELS = [
+  { q:"On the heart diagram, label #1 points to the:",
+    choices:["Left atrium","Right atrium","Left ventricle","Aorta"], a:1 },
+  { q:"Label #2 (bottom-left chamber) is the:",
+    choices:["Right ventricle","Left ventricle","Right atrium","Pulmonary artery"], a:0 },
+  { q:"Label #3 (semilunar valve exiting the right side upward) is the:",
+    choices:["Aortic valve","Pulmonary (semilunar) valve","Tricuspid valve","Bicuspid valve"], a:1 },
+  { q:"Label #4 (upper-right chamber receiving pulmonary veins) is the:",
+    choices:["Right atrium","Left atrium","Left ventricle","Right ventricle"], a:1 },
+  { q:"Label #5 (valve between left atrium and left ventricle) is the:",
+    choices:["Tricuspid valve","Bicuspid (mitral) valve","Aortic valve","Pulmonary valve"], a:1 },
+  { q:"Label #6 (bottom-right chamber - the strongest pumping chamber) is the:",
+    choices:["Right ventricle","Right atrium","Left ventricle","Left atrium"], a:2 },
+  { q:"The large red artery exiting the top of the heart that distributes oxygenated blood to the body is the:",
+    choices:["Pulmonary artery","Aorta","Superior vena cava","Inferior vena cava"], a:1 },
+  { q:"The large blue vessels bringing deoxygenated blood from the body to the right atrium are the:",
+    choices:["Pulmonary veins","Pulmonary arteries","Superior and inferior venae cavae","Coronary arteries"], a:2 },
+];
+
+// ============================================================
+// SECTION 3b: Blood Flow fill-in-the-blank (based on heart2.jpeg)
+// Each entry has a sentence template with blanks and an answer array.
+// Blanks are case-insensitive and tolerant of minor variations.
+// ============================================================
+const HEART_FLOW = [
+  { template: "1. {0} blood returns from the upper and lower body to fill the {1} of the heart, creating a pressure against the {2}.",
+    answers: [
+      ["deoxygenated"],
+      ["right atrium"],
+      ["tricuspid valve"]
+    ]},
+  { template: "2. This pressure of the returning blood forces the {0} open and begins filling the {1}.",
+    answers: [
+      ["tricuspid valve"],
+      ["right ventricle"]
+    ]},
+  { template: "3. The {0} contracts, increasing internal pressure. This pressure closes the {1} and forces open the pulmonary semilunar valve, thus sending blood toward the {2} via the {3}. This blood will become {4} as it travels through the {5} of the {6}, and then returns to the {7} side of the heart.",
+    answers: [
+      ["right ventricle"],
+      ["tricuspid valve"],
+      ["lungs", "lung(s)", "lung"],
+      ["pulmonary artery"],
+      ["oxygenated"],
+      ["capillary beds"],
+      ["lungs", "lung(s)", "lung"],
+      ["left"]
+    ]},
+  { template: "4. {0} blood returns from the {1} via the {2} and fills the {3}, creating a pressure against the {4}.",
+    answers: [
+      ["oxygenated"],
+      ["lungs", "lung(s)", "lung"],
+      ["pulmonary vein"],
+      ["left atrium"],
+      ["bicuspid valve"]
+    ]},
+  { template: "5. This pressure of the returning blood forces the {0} open and begins filling the {1}.",
+    answers: [
+      ["bicuspid valve"],
+      ["left ventricle"]
+    ]},
+  { template: "6. The {0} contracts, increasing internal pressure. This pressure closes the {1} and forces open the aortic valve, causing {2} blood to flow through the {3} to deliver {4} throughout the {5}.",
+    answers: [
+      ["left ventricle"],
+      ["bicuspid valve"],
+      ["oxygenated"],
+      ["aorta"],
+      ["oxygen"],
+      ["body"]
+    ]},
+];
+
+// ============================================================
+// Rendering
+// ============================================================
+let graded = false;
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function renderMCQ(container, items, prefix) {
+  let html = '';
+  items.forEach((item, idx) => {
+    html += `<div class="question" data-idx="${prefix}-${idx}">
+      <div class="q-header">
+        <div class="q-num">${idx + 1}.</div>
+        <div class="q-text">${esc(item.q)}</div>
+      </div>
+      <div class="options">
+        ${item.choices.map((c, i) => `
+          <label class="option" data-choice="${i}">
+            <input type="radio" name="${prefix}${idx}" value="${i}">
+            <b>${String.fromCharCode(65 + i)}.</b> ${esc(c)}
+          </label>
+        `).join('')}
+      </div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function renderFillBlanks(container, items) {
+  let html = '';
+  items.forEach((item, idx) => {
+    let rendered = esc(item.template);
+    item.answers.forEach((_, blankIdx) => {
+      const inputId = `heart-flow-${idx}-${blankIdx}`;
+      rendered = rendered.replace(`{${blankIdx}}`, `<input type="text" id="${inputId}" data-item="${idx}" data-blank="${blankIdx}" autocomplete="off">`);
+    });
+    html += `<div class="question fill-blank" data-idx="hf-${idx}">
+      <div class="q-text" style="margin-left: 0;">${rendered}</div>
+    </div>`;
+  });
+  container.innerHTML = html;
+}
+
+function gradeMCQ(items, prefix) {
+  let correct = 0;
+  items.forEach((item, idx) => {
+    const sel = document.querySelector(`input[name="${prefix}${idx}"]:checked`);
+    const chosen = sel ? parseInt(sel.value) : -1;
+    const isRight = chosen === item.a;
+    if (isRight) correct++;
+    const qDiv = document.querySelector(`.question[data-idx="${prefix}-${idx}"]`);
+    if (!qDiv) return;
+    qDiv.querySelectorAll('.option').forEach(lbl => {
+      lbl.querySelector('input').disabled = true;
+      const ci = parseInt(lbl.dataset.choice);
+      if (ci === item.a) lbl.classList.add(ci === chosen ? 'correct' : 'correct-missed');
+      else if (ci === chosen) lbl.classList.add('wrong');
+    });
+    const header = qDiv.querySelector('.q-header');
+    const badge = document.createElement('span');
+    badge.className = 'result-badge ' + (isRight ? 'right' : 'wrong');
+    badge.textContent = isRight ? 'Correct' : (chosen === -1 ? 'Skipped' : 'Incorrect');
+    header.appendChild(badge);
+  });
+  return correct;
+}
+
+function normalize(s) { return String(s || '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/[.,]$/, ''); }
+
+function gradeFillBlanks(items) {
+  let correct = 0;
+  let total = 0;
+  items.forEach((item, idx) => {
+    item.answers.forEach((validAnswers, blankIdx) => {
+      total++;
+      const input = document.getElementById(`heart-flow-${idx}-${blankIdx}`);
+      if (!input) return;
+      const user = normalize(input.value);
+      const valid = validAnswers.map(normalize);
+      const isRight = valid.includes(user);
+      input.disabled = true;
+      input.classList.add(isRight ? 'correct' : 'wrong');
+      if (isRight) correct++;
+      else {
+        const note = document.createElement('span');
+        note.className = 'answer-note wrong';
+        note.textContent = ` ← ${validAnswers[0]}`;
+        input.parentNode.insertBefore(note, input.nextSibling);
+      }
+    });
+  });
+  return { correct, total };
+}
+
+function showAnswerKey() {
+  let html = '<div class="score-card"><div style="font-size:18px; font-weight:700;">Full Answer Key</div></div>';
+  html += '<div style="padding: 20px 24px;">';
+
+  html += '<h3 style="color: var(--section-blood);">Section 1 — Blood Collection</h3><ol>';
+  BLOOD_QUESTIONS.forEach(item => {
+    const letter = String.fromCharCode(65 + item.a);
+    html += `<li style="margin-bottom:8px;"><b>${esc(item.q)}</b><br><span style="color:#1e8449;"><b>${letter}.</b> ${esc(item.choices[item.a])}</span></li>`;
+  });
+  html += '</ol>';
+
+  html += '<h3 style="color: var(--section-test);">Section 2 — Blood Tests</h3><ol>';
+  TEST_QUESTIONS.forEach(item => {
+    const letter = String.fromCharCode(65 + item.a);
+    html += `<li style="margin-bottom:8px;"><b>${esc(item.q)}</b><br><span style="color:#1e8449;"><b>${letter}.</b> ${esc(item.choices[item.a])}</span></li>`;
+  });
+  html += '</ol>';
+
+  html += '<h3 style="color: var(--section-heart);">Section 3a — Heart Labels</h3><ol>';
+  HEART_LABELS.forEach(item => {
+    const letter = String.fromCharCode(65 + item.a);
+    html += `<li style="margin-bottom:8px;"><b>${esc(item.q)}</b><br><span style="color:#1e8449;"><b>${letter}.</b> ${esc(item.choices[item.a])}</span></li>`;
+  });
+  html += '</ol>';
+
+  html += '<h3 style="color: var(--section-heart);">Section 3b — Blood Flow Fill-in-the-Blank</h3><ol>';
+  HEART_FLOW.forEach(item => {
+    let filled = esc(item.template);
+    item.answers.forEach((valid, i) => {
+      filled = filled.replace(`{${i}}`, `<b style="color:#1e8449;">${esc(valid[0])}</b>`);
+    });
+    html += `<li style="margin-bottom:10px;">${filled}</li>`;
+  });
+  html += '</ol></div>';
+
+  document.getElementById('main').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function render() {
+  renderMCQ(document.getElementById('blood-questions'), BLOOD_QUESTIONS, 'bq');
+  renderMCQ(document.getElementById('test-questions'), TEST_QUESTIONS, 'tq');
+  renderMCQ(document.getElementById('heart-labels'), HEART_LABELS, 'hl');
+  renderFillBlanks(document.getElementById('heart-flow'), HEART_FLOW);
+  document.getElementById('count-blood').textContent = `${BLOOD_QUESTIONS.length} questions`;
+  document.getElementById('count-test').textContent = `${TEST_QUESTIONS.length} questions`;
+  const flowBlanks = HEART_FLOW.reduce((s, item) => s + item.answers.length, 0);
+  document.getElementById('count-heart').textContent = `${HEART_LABELS.length} labels + ${flowBlanks} fill-in blanks`;
+  const total = BLOOD_QUESTIONS.length + TEST_QUESTIONS.length + HEART_LABELS.length + flowBlanks;
+  document.getElementById('progress').textContent = `${total} total items`;
+}
+
+function grade() {
+  if (graded) return;
+  const bScore = gradeMCQ(BLOOD_QUESTIONS, 'bq');
+  const tScore = gradeMCQ(TEST_QUESTIONS, 'tq');
+  const hLabelScore = gradeMCQ(HEART_LABELS, 'hl');
+  const hFlow = gradeFillBlanks(HEART_FLOW);
+
+  const bTotal = BLOOD_QUESTIONS.length;
+  const tTotal = TEST_QUESTIONS.length;
+  const hLabelTotal = HEART_LABELS.length;
+  const hFlowCorrect = hFlow.correct;
+  const hFlowTotal = hFlow.total;
+
+  const totalCorrect = bScore + tScore + hLabelScore + hFlowCorrect;
+  const totalPossible = bTotal + tTotal + hLabelTotal + hFlowTotal;
+  const pct = Math.round((totalCorrect / totalPossible) * 100);
+  const pass = pct >= 75;
+
+  const score = document.createElement('div');
+  score.innerHTML = `
+    <div class="score-card">
+      <div style="font-size:14px; opacity:0.85;">YOUR SCORE</div>
+      <div class="big ${pass ? 'pass' : 'fail'}">${totalCorrect} / ${totalPossible} &nbsp; (${pct}%)</div>
+      <div>${pass ? 'Pass — keep practicing!' : 'Below 75% — review the missed items.'}</div>
+      <div class="section-breakdown">
+        <div class="section-stat"><div>Blood Collection</div><div class="num">${bScore}/${bTotal}</div></div>
+        <div class="section-stat"><div>Blood Tests</div><div class="num">${tScore}/${tTotal}</div></div>
+        <div class="section-stat"><div>Heart (Labels + Flow)</div><div class="num">${hLabelScore + hFlowCorrect}/${hLabelTotal + hFlowTotal}</div></div>
+      </div>
+    </div>
+  `;
+  document.getElementById('main').insertBefore(score, document.getElementById('main').firstChild);
+
+  graded = true;
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('revealBtn').disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openLightbox(src) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = src;
+  lb.classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+
+document.getElementById('submitBtn').addEventListener('click', () => {
+  const flowBlanks = HEART_FLOW.reduce((s, item) => s + item.answers.length, 0);
+  const answered =
+    BLOOD_QUESTIONS.filter((_, i) => document.querySelector(`input[name="bq${i}"]:checked`)).length +
+    TEST_QUESTIONS.filter((_, i) => document.querySelector(`input[name="tq${i}"]:checked`)).length +
+    HEART_LABELS.filter((_, i) => document.querySelector(`input[name="hl${i}"]:checked`)).length +
+    HEART_FLOW.reduce((s, item, idx) => s + item.answers.filter((_, b) => (document.getElementById(`heart-flow-${idx}-${b}`) || {}).value || '').map(v => v).length, 0);
+  const total = BLOOD_QUESTIONS.length + TEST_QUESTIONS.length + HEART_LABELS.length + flowBlanks;
+  if (answered < total) {
+    if (!confirm(`You've answered ${answered} of ${total} items. Grade anyway?`)) return;
+  }
+  grade();
+});
+
+document.getElementById('revealBtn').addEventListener('click', showAnswerKey);
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!graded && !confirm('Reset and clear all answers?')) return;
+  graded = false;
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('revealBtn').disabled = true;
+  location.reload();
+});
+
+render();
+</script>
+</body>
+</html>
