@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Personalized Test - Heart Anatomy & Flow</title>
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --primary: #7a1f5b;
+    --primary-dark: #591043;
+    --accent-heart: #ad1457;
+    --right: #1e8449;
+    --wrong: #c0392b;
+    --muted: #6b7280;
+    --border: #e2e6ee;
+    --sidebar-bg: #2a1226;
+    --sidebar-fg: #e9d5e4;
+    --sidebar-current: #7a1f5b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: #222;
+    margin: 0;
+    line-height: 1.5;
+    display: flex;
+    min-height: 100vh;
+  }
+  .sidebar {
+    width: 250px;
+    background: var(--sidebar-bg);
+    color: var(--sidebar-fg);
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+    flex-shrink: 0;
+  }
+  .sb-logo { padding: 0 20px 16px; font-size: 17px; font-weight: 700; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 10px; }
+  .sb-logo .sub { font-size: 11px; font-weight: 400; opacity: 0.7; display: block; margin-top: 2px; }
+  .sb-section { padding: 14px 20px 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.6px; opacity: 0.6; font-weight: 600; }
+  .sidebar nav a {
+    display: block;
+    padding: 10px 20px;
+    color: var(--sidebar-fg);
+    text-decoration: none;
+    font-size: 14px;
+    border-left: 3px solid transparent;
+  }
+  .sidebar nav a:hover { background: rgba(255,255,255,0.06); }
+  .sidebar nav a.current { background: var(--sidebar-current); color: #fff; border-left-color: #fff; font-weight: 600; }
+  .sidebar nav a .icon { margin-right: 6px; }
+  .content { flex: 1; min-width: 0; padding: 24px; }
+  header.page-head {
+    background: linear-gradient(135deg, var(--accent-heart), #880e4f);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 10px 10px 0 0;
+  }
+  header.page-head h1 { margin: 0; font-size: 22px; }
+  header.page-head .sub { font-size: 14px; opacity: 0.9; margin-top: 4px; }
+  .toolbar {
+    background: #fff;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  button:hover { background: var(--primary-dark); }
+  button.secondary { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .progress { margin-left: auto; font-size: 13px; color: var(--muted); }
+  main.card {
+    background: #fff;
+    padding: 20px 24px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  .img-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+  .img-row img { flex: 1 1 300px; max-width: 100%; border: 1px solid var(--border); border-radius: 8px; cursor: zoom-in; }
+  .ref-caption { font-size: 12px; color: var(--muted); font-style: italic; margin-bottom: 20px; }
+  .section-title {
+    color: var(--accent-heart);
+    border-bottom: 2px solid var(--accent-heart);
+    padding-bottom: 6px;
+    margin: 30px 0 16px;
+    font-size: 18px;
+  }
+  .question {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .q-header { display: flex; gap: 10px; margin-bottom: 8px; }
+  .q-num { font-weight: 700; color: var(--primary); min-width: 36px; }
+  .q-text { font-weight: 500; }
+  .options { margin: 8px 0 0 46px; }
+  .option {
+    display: block;
+    padding: 7px 11px;
+    margin: 5px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .option:hover { background: #fde4ef; }
+  .option input { margin-right: 10px; }
+  .option.correct { background: #e6f6ed; border-color: var(--right); }
+  .option.wrong { background: #fbe9e7; border-color: var(--wrong); }
+  .option.correct-missed { background: #e6f6ed; border-color: var(--right); border-style: dashed; }
+  .fill-blank input[type=text] {
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 15px;
+    min-width: 170px;
+  }
+  .fill-blank input.correct { background: #e6f6ed; border-color: var(--right); }
+  .fill-blank input.wrong { background: #fbe9e7; border-color: var(--wrong); }
+  .fill-blank .answer-note { display: inline-block; margin-left: 10px; color: var(--right); font-weight: 600; font-size: 13px; }
+  .fill-blank .answer-note.wrong { color: var(--wrong); }
+  .result-badge {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .result-badge.right { background: var(--right); color: #fff; }
+  .result-badge.wrong { background: var(--wrong); color: #fff; }
+  .score-card {
+    background: linear-gradient(135deg, var(--accent-heart), #880e4f);
+    color: white;
+    padding: 22px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .score-card .big { font-size: 42px; font-weight: 700; margin: 10px 0; }
+  .score-card .pass { color: #c5f6d6; }
+  .score-card .fail { color: #ffc7c0; }
+  .word-bank {
+    background: #fde4ef;
+    border-left: 3px solid var(--accent-heart);
+    padding: 10px 14px;
+    margin: 12px 0 18px;
+    font-size: 14px;
+  }
+  .word-bank b { color: var(--accent-heart); }
+  .menu-btn { display: none; background: var(--sidebar-bg); color: #fff; border: none; padding: 10px 14px; font-size: 15px; border-radius: 6px; margin-bottom: 10px; }
+  @media (max-width: 760px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; height: auto; position: static; display: none; }
+    .sidebar.open { display: block; }
+    .menu-btn { display: inline-block; }
+    .content { padding: 14px; }
+  }
+  .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; cursor: zoom-out; align-items: center; justify-content: center; padding: 20px; }
+  .lightbox.open { display: flex; }
+  .lightbox img { max-width: 100%; max-height: 100%; }
+</style>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+  <div class="sb-logo">NHA CPT Practice <span class="sub">Study Tool</span></div>
+  <nav>
+    <a href="index.html"><span class="icon">&#9632;</span>Index (Home)</a>
+    <a href="nha-cpt-practice1.html"><span class="icon">&#9632;</span>Randomized Test (Page 1)</a>
+    <div class="sb-section">Personalized Test</div>
+    <a href="personalized_test_blood_collection.html">Blood Collection</a>
+    <a href="personalized_test_blood_tests.html">Blood Tests</a>
+    <a href="personalized_test_heart.html" class="current">Heart Anatomy &amp; Flow</a>
+    <div class="sb-section">All-in-One</div>
+    <a href="personalized_test.html">Full Personalized Test</a>
+  </nav>
+</aside>
+
+<div class="content">
+  <button class="menu-btn" onclick="document.getElementById('sidebar').classList.toggle('open')">&#9776; Menu</button>
+  <header class="page-head">
+    <h1>Personalized Test &mdash; Heart Anatomy &amp; Blood Flow</h1>
+    <div class="sub">8 label questions + 25 fill-in-the-blank blanks</div>
+  </header>
+  <div class="toolbar">
+    <button id="submitBtn">Submit &amp; Grade</button>
+    <button id="revealBtn" class="secondary" disabled>Show Answer Key</button>
+    <button id="resetBtn" class="secondary" onclick="location.reload()">Reset</button>
+    <span class="progress" id="progress"></span>
+  </div>
+  <main class="card">
+    <div class="img-row">
+      <img src="Phlebotomy_questions/heart1.jpeg" alt="Heart diagram labels 1-6" onclick="openLightbox(this.src)">
+      <img src="Phlebotomy_questions/heart2.jpeg" alt="Blood Flow of the Heart worksheet" onclick="openLightbox(this.src)">
+    </div>
+    <div class="ref-caption">Numbers 1-6 refer to the labeled points on the heart diagram (left image). Click to zoom.</div>
+
+    <div class="word-bank">
+      <b>Word Bank (for the blood-flow blanks):</b>
+      left &middot; right &middot; left atrium &middot; right atrium &middot; left ventricle &middot; right ventricle &middot;
+      oxygenated &middot; deoxygenated &middot; tricuspid valve &middot; bicuspid valve &middot;
+      pulmonary artery &middot; pulmonary vein &middot; aorta &middot; body &middot; capillary beds &middot; lung(s) &middot; oxygen
+    </div>
+
+    <h3 class="section-title">Part A — Heart Diagram Labels (Multiple Choice)</h3>
+    <div id="labels"></div>
+
+    <h3 class="section-title">Part B — Blood Flow Fill-in-the-Blank</h3>
+    <div id="flow"></div>
+  </main>
+</div>
+
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <img id="lb-img" src="" alt="">
+</div>
+
+<script>
+const LABELS = [
+  { q:"On the heart diagram, label #1 points to the:",
+    choices:["Left atrium","Right atrium","Left ventricle","Aorta"], a:1 },
+  { q:"Label #2 (bottom-left chamber) is the:",
+    choices:["Right ventricle","Left ventricle","Right atrium","Pulmonary artery"], a:0 },
+  { q:"Label #3 (semilunar valve exiting the right side upward) is the:",
+    choices:["Aortic valve","Pulmonary (semilunar) valve","Tricuspid valve","Bicuspid valve"], a:1 },
+  { q:"Label #4 (upper-right chamber receiving pulmonary veins) is the:",
+    choices:["Right atrium","Left atrium","Left ventricle","Right ventricle"], a:1 },
+  { q:"Label #5 (valve between left atrium and left ventricle) is the:",
+    choices:["Tricuspid valve","Bicuspid (mitral) valve","Aortic valve","Pulmonary valve"], a:1 },
+  { q:"Label #6 (bottom-right chamber - the strongest pumping chamber) is the:",
+    choices:["Right ventricle","Right atrium","Left ventricle","Left atrium"], a:2 },
+  { q:"The large red artery exiting the top of the heart that distributes oxygenated blood to the body is the:",
+    choices:["Pulmonary artery","Aorta","Superior vena cava","Inferior vena cava"], a:1 },
+  { q:"The large blue vessels bringing deoxygenated blood from the body to the right atrium are the:",
+    choices:["Pulmonary veins","Pulmonary arteries","Superior and inferior venae cavae","Coronary arteries"], a:2 },
+];
+
+const FLOW = [
+  { template: "1. {0} blood returns from the upper and lower body to fill the {1} of the heart, creating a pressure against the {2}.",
+    answers: [["deoxygenated"],["right atrium"],["tricuspid valve"]] },
+  { template: "2. This pressure of the returning blood forces the {0} open and begins filling the {1}.",
+    answers: [["tricuspid valve"],["right ventricle"]] },
+  { template: "3. The {0} contracts, increasing internal pressure. This pressure closes the {1} and forces open the pulmonary semilunar valve, thus sending blood toward the {2} via the {3}. This blood will become {4} as it travels through the {5} of the {6}, and then returns to the {7} side of the heart.",
+    answers: [["right ventricle"],["tricuspid valve"],["lungs","lung(s)","lung"],["pulmonary artery"],["oxygenated"],["capillary beds"],["lungs","lung(s)","lung"],["left"]] },
+  { template: "4. {0} blood returns from the {1} via the {2} and fills the {3}, creating a pressure against the {4}.",
+    answers: [["oxygenated"],["lungs","lung(s)","lung"],["pulmonary vein"],["left atrium"],["bicuspid valve"]] },
+  { template: "5. This pressure of the returning blood forces the {0} open and begins filling the {1}.",
+    answers: [["bicuspid valve"],["left ventricle"]] },
+  { template: "6. The {0} contracts, increasing internal pressure. This pressure closes the {1} and forces open the aortic valve, causing {2} blood to flow through the {3} to deliver {4} throughout the {5}.",
+    answers: [["left ventricle"],["bicuspid valve"],["oxygenated"],["aorta"],["oxygen"],["body"]] },
+];
+
+let graded = false;
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const normalize = s => String(s||'').trim().toLowerCase().replace(/\s+/g,' ').replace(/[.,]$/,'');
+
+function renderLabels() {
+  document.getElementById('labels').innerHTML = LABELS.map((item, idx) => `
+    <div class="question" data-idx="L${idx}">
+      <div class="q-header">
+        <div class="q-num">${idx + 1}.</div>
+        <div class="q-text">${esc(item.q)}</div>
+      </div>
+      <div class="options">
+        ${item.choices.map((c, i) => `
+          <label class="option" data-choice="${i}">
+            <input type="radio" name="L${idx}" value="${i}">
+            <b>${String.fromCharCode(65 + i)}.</b> ${esc(c)}
+          </label>
+        `).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderFlow() {
+  document.getElementById('flow').innerHTML = FLOW.map((item, idx) => {
+    let rendered = esc(item.template);
+    item.answers.forEach((_, bi) => {
+      rendered = rendered.replace(`{${bi}}`, `<input type="text" id="F-${idx}-${bi}" data-item="${idx}" data-blank="${bi}" autocomplete="off">`);
+    });
+    return `<div class="question fill-blank"><div class="q-text" style="margin-left: 0;">${rendered}</div></div>`;
+  }).join('');
+}
+
+function updateProgress() {
+  const flowBlanks = FLOW.reduce((s, item) => s + item.answers.length, 0);
+  document.getElementById('progress').textContent = `${LABELS.length} labels + ${flowBlanks} blanks`;
+}
+
+function grade() {
+  if (graded) return;
+  let labelCorrect = 0;
+  LABELS.forEach((item, idx) => {
+    const sel = document.querySelector(`input[name="L${idx}"]:checked`);
+    const chosen = sel ? parseInt(sel.value) : -1;
+    const isRight = chosen === item.a;
+    if (isRight) labelCorrect++;
+    const qDiv = document.querySelector(`.question[data-idx="L${idx}"]`);
+    qDiv.querySelectorAll('.option').forEach(lbl => {
+      lbl.querySelector('input').disabled = true;
+      const ci = parseInt(lbl.dataset.choice);
+      if (ci === item.a) lbl.classList.add(ci === chosen ? 'correct' : 'correct-missed');
+      else if (ci === chosen) lbl.classList.add('wrong');
+    });
+    const badge = document.createElement('span');
+    badge.className = 'result-badge ' + (isRight ? 'right' : 'wrong');
+    badge.textContent = isRight ? 'Correct' : (chosen === -1 ? 'Skipped' : 'Incorrect');
+    qDiv.querySelector('.q-header').appendChild(badge);
+  });
+
+  let flowCorrect = 0;
+  let flowTotal = 0;
+  FLOW.forEach((item, idx) => {
+    item.answers.forEach((validAns, bi) => {
+      flowTotal++;
+      const input = document.getElementById(`F-${idx}-${bi}`);
+      if (!input) return;
+      const user = normalize(input.value);
+      const valid = validAns.map(normalize);
+      const isRight = valid.includes(user);
+      input.disabled = true;
+      input.classList.add(isRight ? 'correct' : 'wrong');
+      if (isRight) flowCorrect++;
+      else {
+        const note = document.createElement('span');
+        note.className = 'answer-note wrong';
+        note.textContent = ` ← ${validAns[0]}`;
+        input.parentNode.insertBefore(note, input.nextSibling);
+      }
+    });
+  });
+
+  const total = LABELS.length + flowTotal;
+  const correct = labelCorrect + flowCorrect;
+  const pct = Math.round((correct / total) * 100);
+  const pass = pct >= 75;
+  const card = document.createElement('div');
+  card.innerHTML = `
+    <div class="score-card">
+      <div style="font-size:13px; opacity:0.85;">HEART SCORE</div>
+      <div class="big ${pass ? 'pass' : 'fail'}">${correct} / ${total} &nbsp; (${pct}%)</div>
+      <div>Labels: ${labelCorrect}/${LABELS.length} &nbsp;·&nbsp; Fill-in-blanks: ${flowCorrect}/${flowTotal}</div>
+      <div style="margin-top:8px;">${pass ? 'Pass — keep practicing!' : 'Below 75% — review the missed items.'}</div>
+    </div>`;
+  const main = document.querySelector('main.card');
+  main.insertBefore(card, main.firstChild);
+  graded = true;
+  document.getElementById('submitBtn').disabled = true;
+  document.getElementById('revealBtn').disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showAnswerKey() {
+  let html = `<div class="score-card"><div style="font-weight:700; font-size:18px;">Answer Key — Heart</div></div>
+    <h3 class="section-title">Part A — Diagram Labels</h3><ol style="line-height:1.8;">`;
+  LABELS.forEach(item => {
+    const letter = String.fromCharCode(65 + item.a);
+    html += `<li><b>${esc(item.q)}</b><br><span style="color:#1e8449;"><b>${letter}.</b> ${esc(item.choices[item.a])}</span></li>`;
+  });
+  html += `</ol><h3 class="section-title">Part B — Blood Flow</h3><ol style="line-height:1.8;">`;
+  FLOW.forEach(item => {
+    let filled = esc(item.template);
+    item.answers.forEach((valid, i) => {
+      filled = filled.replace(`{${i}}`, `<b style="color:#1e8449;">${esc(valid[0])}</b>`);
+    });
+    html += `<li style="margin-bottom:8px;">${filled}</li>`;
+  });
+  html += `</ol>`;
+  document.querySelector('main.card').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.getElementById('submitBtn').addEventListener('click', () => {
+  const flowBlanks = FLOW.reduce((s, item) => s + item.answers.length, 0);
+  const labelAnswered = LABELS.filter((_, i) => document.querySelector(`input[name="L${i}"]:checked`)).length;
+  let flowAnswered = 0;
+  FLOW.forEach((item, idx) => item.answers.forEach((_, bi) => {
+    const el = document.getElementById(`F-${idx}-${bi}`);
+    if (el && el.value.trim()) flowAnswered++;
+  }));
+  const total = LABELS.length + flowBlanks;
+  const answered = labelAnswered + flowAnswered;
+  if (answered < total && !confirm(`You've answered ${answered} of ${total}. Grade anyway?`)) return;
+  grade();
+});
+document.getElementById('revealBtn').addEventListener('click', showAnswerKey);
+function openLightbox(src) { document.getElementById('lb-img').src = src; document.getElementById('lightbox').classList.add('open'); }
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+renderLabels();
+renderFlow();
+updateProgress();
+</script>
+</body>
+</html>

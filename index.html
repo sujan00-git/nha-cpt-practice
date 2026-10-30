@@ -10,6 +10,8 @@
     --primary: #1e5aa8;
     --primary-dark: #164480;
     --accent-blood: #c62828;
+    --accent-test: #1565c0;
+    --accent-heart: #ad1457;
     --accent-personal: #7a1f5b;
     --muted: #6b7280;
     --border: #e2e6ee;
@@ -24,7 +26,7 @@
     line-height: 1.5;
     min-height: 100vh;
   }
-  .wrap { max-width: 920px; margin: 0 auto; }
+  .wrap { max-width: 1080px; margin: 0 auto; }
   header {
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
@@ -35,16 +37,22 @@
   }
   header h1 { margin: 0; font-size: 30px; font-weight: 700; }
   header .subtitle { font-size: 15px; opacity: 0.92; margin-top: 8px; }
+  h2.group {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 32px 0 12px;
+    text-align: center;
+  }
   main {
-    margin-top: 30px;
     display: grid;
-    gap: 20px;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
   .card {
     background: var(--card);
     border-radius: 12px;
-    padding: 0;
     box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     overflow: hidden;
     text-decoration: none;
@@ -58,40 +66,43 @@
     box-shadow: 0 8px 24px rgba(0,0,0,0.1);
   }
   .card-head {
-    padding: 22px 24px 16px;
+    padding: 20px 22px 14px;
     color: white;
     position: relative;
   }
   .card-head.randomized { background: linear-gradient(135deg, #1e5aa8, #164480); }
-  .card-head.personalized { background: linear-gradient(135deg, #7a1f5b, #591043); }
-  .card-head .page-num {
+  .card-head.personalized-overview { background: linear-gradient(135deg, #7a1f5b, #591043); }
+  .card-head.blood { background: linear-gradient(135deg, #c62828, #8e1a1a); }
+  .card-head.tests { background: linear-gradient(135deg, #1565c0, #0d47a1); }
+  .card-head.heart { background: linear-gradient(135deg, #ad1457, #880e4f); }
+  .card-head .page-tag {
     position: absolute;
-    top: 14px; right: 18px;
+    top: 12px; right: 16px;
     background: rgba(255,255,255,0.2);
-    padding: 3px 10px;
+    padding: 2px 10px;
     border-radius: 10px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.3px;
   }
-  .card-head h2 { margin: 0 0 4px; font-size: 20px; }
-  .card-head .tagline { font-size: 13px; opacity: 0.9; }
+  .card-head h3 { margin: 0 0 4px; font-size: 18px; }
+  .card-head .tagline { font-size: 12px; opacity: 0.9; }
   .card-body {
-    padding: 20px 24px;
+    padding: 16px 22px 18px;
     flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 16px;
+    gap: 14px;
   }
   .card-body .features {
     list-style: none;
     padding: 0;
     margin: 0;
-    font-size: 14px;
+    font-size: 13px;
   }
   .card-body .features li {
-    padding: 4px 0 4px 20px;
+    padding: 3px 0 3px 20px;
     position: relative;
   }
   .card-body .features li::before {
@@ -103,16 +114,19 @@
   }
   .card-body .cta {
     display: inline-block;
-    padding: 10px 18px;
+    padding: 8px 14px;
     border-radius: 6px;
     color: white;
     font-weight: 600;
     text-align: center;
-    font-size: 15px;
+    font-size: 13px;
     align-self: flex-start;
   }
   .cta.randomized { background: var(--primary); }
-  .cta.personalized { background: var(--accent-personal); }
+  .cta.personalized-overview { background: var(--accent-personal); }
+  .cta.blood { background: var(--accent-blood); }
+  .cta.tests { background: var(--accent-test); }
+  .cta.heart { background: var(--accent-heart); }
   .footer {
     text-align: center;
     color: var(--muted);
@@ -151,47 +165,98 @@
     <div class="subtitle">Certified Phlebotomy Technician Exam Prep</div>
   </header>
 
+  <h2 class="group">Full-Length Random Practice</h2>
   <main>
     <a class="card" href="nha-cpt-practice1.html">
       <div class="card-head randomized">
-        <div class="page-num">PAGE 1</div>
-        <h2>Randomized Practice Test</h2>
+        <div class="page-tag">PAGE 1</div>
+        <h3>Randomized Practice Test</h3>
         <div class="tagline">1,127-question bank with weighted "high-yield" rotation</div>
       </div>
       <div class="card-body">
         <ul class="features">
           <li>20 random questions per test</li>
           <li>Covers all 5 NHA CPT domains</li>
-          <li>First 10 runs weighted ~75% toward core high-yield topics</li>
-          <li>Auto-grading with pass/fail scorecard and answer key</li>
-          <li>Progress persists in your browser (localStorage)</li>
+          <li>First 10 runs weighted ~75% toward core topics</li>
+          <li>Auto-grading &amp; answer key</li>
         </ul>
         <span class="cta randomized">Start Random Test &rarr;</span>
       </div>
     </a>
+  </main>
 
-    <a class="card" href="personalized_test.html">
-      <div class="card-head personalized">
-        <div class="page-num">PAGE 2</div>
-        <h2>Personalized Test</h2>
-        <div class="tagline">Built from your own handwritten study materials</div>
+  <h2 class="group">Personalized Test — By Section</h2>
+  <main>
+    <a class="card" href="personalized_test_blood_collection.html">
+      <div class="card-head blood">
+        <div class="page-tag">PERSONALIZED</div>
+        <h3>Blood Collection</h3>
+        <div class="tagline">Order of Draw &amp; BD Vacutainer Guide</div>
       </div>
       <div class="card-body">
         <ul class="features">
-          <li>Blood Collection — Order of Draw + BD Vacutainer Guide (34 questions)</li>
-          <li>Blood Tests — from the hospital requisition form (31 questions)</li>
-          <li>Heart Anatomy — labels on the diagram + Blood Flow fill-in-the-blank</li>
-          <li>Image-referenced questions with zoomable study aids</li>
-          <li>Auto-grading and complete answer key</li>
+          <li>34 questions</li>
+          <li>Zoomable reference images from your study sheets</li>
+          <li>Tube colors, additives, inversions, special notes</li>
         </ul>
-        <span class="cta personalized">Start Personalized Test &rarr;</span>
+        <span class="cta blood">Open Section &rarr;</span>
+      </div>
+    </a>
+
+    <a class="card" href="personalized_test_blood_tests.html">
+      <div class="card-head tests">
+        <div class="page-tag">PERSONALIZED</div>
+        <h3>Blood Tests</h3>
+        <div class="tagline">From the Hospital Requisition Form</div>
+      </div>
+      <div class="card-body">
+        <ul class="features">
+          <li>31 questions</li>
+          <li>Which tube for CBC, PT, Type &amp; Screen, etc.</li>
+          <li>Panels, acronyms, and special containers</li>
+        </ul>
+        <span class="cta tests">Open Section &rarr;</span>
+      </div>
+    </a>
+
+    <a class="card" href="personalized_test_heart.html">
+      <div class="card-head heart">
+        <div class="page-tag">PERSONALIZED</div>
+        <h3>Heart Anatomy &amp; Flow</h3>
+        <div class="tagline">Diagram labels + fill-in-the-blank worksheet</div>
+      </div>
+      <div class="card-body">
+        <ul class="features">
+          <li>8 label questions + 25 fill-in blanks</li>
+          <li>Chamber &amp; valve identification</li>
+          <li>Complete blood-flow pathway with word bank</li>
+        </ul>
+        <span class="cta heart">Open Section &rarr;</span>
+      </div>
+    </a>
+  </main>
+
+  <h2 class="group">All-in-One</h2>
+  <main>
+    <a class="card" href="personalized_test.html">
+      <div class="card-head personalized-overview">
+        <div class="page-tag">COMBINED</div>
+        <h3>Full Personalized Test (All Sections)</h3>
+        <div class="tagline">All three personalized sections on one page</div>
+      </div>
+      <div class="card-body">
+        <ul class="features">
+          <li>Combined scorecard with per-section breakdown</li>
+          <li>Good for one full-length practice sit</li>
+        </ul>
+        <span class="cta personalized-overview">Open Combined Test &rarr;</span>
       </div>
     </a>
   </main>
 
   <div class="meta-stats">
     <div class="stat"><div class="num">1,127</div><div class="label">Random Qs</div></div>
-    <div class="stat"><div class="num">80+</div><div class="label">Personalized Items</div></div>
+    <div class="stat"><div class="num">98</div><div class="label">Personalized Items</div></div>
     <div class="stat"><div class="num">5</div><div class="label">Exam Domains</div></div>
     <div class="stat"><div class="num">5</div><div class="label">Study Images</div></div>
   </div>
