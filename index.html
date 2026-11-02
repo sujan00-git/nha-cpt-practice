@@ -13,6 +13,7 @@
     --accent-test: #1565c0;
     --accent-heart: #ad1457;
     --accent-personal: #7a1f5b;
+    --accent-baseline: #0b8a5a;
     --muted: #6b7280;
     --border: #e2e6ee;
   }
@@ -75,6 +76,7 @@
   .card-head.blood { background: linear-gradient(135deg, #c62828, #8e1a1a); }
   .card-head.tests { background: linear-gradient(135deg, #1565c0, #0d47a1); }
   .card-head.heart { background: linear-gradient(135deg, #ad1457, #880e4f); }
+  .card-head.baseline { background: linear-gradient(135deg, #0b8a5a, #086c47); }
   .card-head .page-tag {
     position: absolute;
     top: 12px; right: 16px;
@@ -127,6 +129,7 @@
   .cta.blood { background: var(--accent-blood); }
   .cta.tests { background: var(--accent-test); }
   .cta.heart { background: var(--accent-heart); }
+  .cta.baseline { background: var(--accent-baseline); }
   .footer {
     text-align: center;
     color: var(--muted);
@@ -181,6 +184,23 @@
           <li>Auto-grading &amp; answer key</li>
         </ul>
         <span class="cta randomized">Start Random Test &rarr;</span>
+      </div>
+    </a>
+
+    <a class="card" href="baseline_practice_test.html">
+      <div class="card-head baseline">
+        <div class="page-tag">BASELINE</div>
+        <h3>Baseline Practice Test</h3>
+        <div class="tagline">Questions drawn from the Focused-Review PDFs</div>
+      </div>
+      <div class="card-body">
+        <ul class="features">
+          <li>25 random questions per test</li>
+          <li>181-question bank from the baseline PDFs</li>
+          <li>Each test saved to Past Tests for later review</li>
+          <li>Download each test as a .txt file</li>
+        </ul>
+        <span class="cta baseline">Start Baseline Test &rarr;</span>
       </div>
     </a>
   </main>
@@ -256,6 +276,7 @@
 
   <div class="meta-stats">
     <div class="stat"><div class="num">1,127</div><div class="label">Random Qs</div></div>
+    <div class="stat"><div class="num">181</div><div class="label">Baseline Qs</div></div>
     <div class="stat"><div class="num">98</div><div class="label">Personalized Items</div></div>
     <div class="stat"><div class="num">5</div><div class="label">Exam Domains</div></div>
     <div class="stat"><div class="num">5</div><div class="label">Study Images</div></div>

@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NHA CPT Baseline Practice Test</title>
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --primary: #0b8a5a;
+    --primary-dark: #086c47;
+    --accent: #1e5aa8;
+    --wrong: #c0392b;
+    --right: #1e8449;
+    --muted: #6b7280;
+    --border: #e2e6ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: #222;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 { margin: 0; font-size: 22px; }
+  header .meta { font-size: 14px; opacity: 0.92; }
+  .toolbar {
+    background: #fff;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button:hover { background: var(--primary-dark); }
+  button.secondary {
+    background: #fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+  }
+  button.secondary:hover { background: #e9f5ef; }
+  button.ghost {
+    background: #fff;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  button.ghost:hover { background: #eef3fb; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .progress {
+    margin-left: auto;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  main {
+    background: var(--card);
+    padding: 24px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    min-height: 400px;
+  }
+  .question {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .question:last-child { border-bottom: none; }
+  .q-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .q-num {
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 32px;
+  }
+  .q-text { font-weight: 500; }
+  .options { margin: 10px 0 0 42px; }
+  .option {
+    display: block;
+    padding: 8px 12px;
+    margin: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .option:hover { background: #eef7f1; }
+  .option input { margin-right: 10px; }
+  .option.correct {
+    background: #e6f6ed;
+    border-color: var(--right);
+  }
+  .option.wrong {
+    background: #fbe9e7;
+    border-color: var(--wrong);
+  }
+  .option.correct-missed {
+    background: #e6f6ed;
+    border-color: var(--right);
+    border-style: dashed;
+  }
+  .result-badge {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .result-badge.right { background: var(--right); color: #fff; }
+  .result-badge.wrong { background: var(--wrong); color: #fff; }
+  .domain {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    margin-left: 42px;
+  }
+  .score-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 24px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .score-card .big {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 10px 0;
+  }
+  .score-card .pass { color: #a8f0c6; }
+  .score-card .fail { color: #ffc7c0; }
+  .domain-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .domain-stat {
+    background: rgba(255,255,255,0.15);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .domain-stat .num { font-size: 20px; font-weight: 700; }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+    font-size: 16px;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 20px;
+    padding: 10px;
+  }
+  .test-id {
+    font-family: monospace;
+    font-size: 12px;
+    color: #ddefdd;
+    margin-top: 4px;
+  }
+  .history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #fafbfd;
+  }
+  .history-item .hi-meta { font-size: 13px; color: var(--muted); }
+  .history-item .hi-title { font-weight: 600; color: #222; }
+  .history-item .hi-score {
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    background: #e2e8f0;
+    color: #334155;
+  }
+  .history-item .hi-score.pass { background: #c8ead6; color: #0b6b3b; }
+  .history-item .hi-score.fail { background: #f5cbc4; color: #8e1a1a; }
+  .history-item .hi-score.ungraded { background: #e5e7eb; color: #4b5563; }
+  .history-actions { display: flex; gap: 6px; }
+  .history-actions button { padding: 6px 10px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>NHA CPT Baseline Practice Test</h1>
+      <div class="meta">Questions drawn from the baseline Focused-Review PDFs &mdash; 25 per test, random each run.</div>
+      <div style="margin-top:8px; font-size:13px;">
+        <a href="index.html" style="color:#eafff5; text-decoration:underline;">&larr; Back to Index</a>
+      </div>
+      <div class="test-id" id="testIdLabel"></div>
+    </div>
+  </header>
+  <div class="toolbar">
+    <button id="newBtn">New Test</button>
+    <button id="submitBtn" class="secondary">Submit &amp; Grade</button>
+    <button id="revealBtn" class="secondary" disabled>Show Answer Key</button>
+    <button id="downloadBtn" class="ghost" disabled>Download Test</button>
+    <button id="historyBtn" class="ghost">Past Tests</button>
+    <span class="progress" id="progress"></span>
+  </div>
+  <main id="main">
+    <div class="empty">Click <b>New Test</b> to begin a 25-question practice set.</div>
+  </main>
+  <footer>Study aid only &mdash; questions are representative, derived from the baseline NHA CPT Focused-Review PDFs.</footer>
+</div>
+
+<script>
+// ============================================================
+// Baseline question bank. Each question: { q, choices (A-D), answer (index 0-3), domain }
+// Domains: SC = Safety/Compliance, PP = Patient Prep,
+//          RC = Routine Collections, SP = Special Collections, PR = Processing
+// Content drawn from practice-test-baseline/*.pdf
+// ============================================================
+const QUESTIONS = [
+  // ========== SAFETY & COMPLIANCE (SC) ==========
+  { q:"The acronym PASS for using a fire extinguisher stands for:",
+    choices:["Push, Aim, Spray, Stop","Pull, Aim, Squeeze, Sweep","Pull, Approach, Spray, Secure","Push, Approach, Squeeze, Sweep"],
+    answer:1, domain:"SC" },
+  { q:"In the fire-response acronym RACE, the \"R\" stands for:",
+    choices:["Report the fire","Rescue others who are in danger","Run from the building","Review the exit plan"],
+    answer:1, domain:"SC" },
+  { q:"Place the RACE fire-response steps in order:",
+    choices:["Alarm, Rescue, Confine, Extinguish","Rescue, Alarm, Confine, Extinguish","Rescue, Confine, Alarm, Extinguish","Confine, Rescue, Alarm, Extinguish"],
+    answer:1, domain:"SC" },
+  { q:"NIOSH is a component of which larger federal agency?",
+    choices:["OSHA","FDA","CDC (within DHHS)","CMS"],
+    answer:2, domain:"SC" },
+  { q:"A safe laboratory work environment is mandated by the Occupational Safety and Health Act and enforced by:",
+    choices:["CDC","OSHA","FDA","The Joint Commission"],
+    answer:1, domain:"SC" },
+  { q:"Which of the following is a general OSHA laboratory safety rule for phlebotomists?",
+    choices:["Keep nails short with no polish or artificial nails","Wear sandals for comfort","Chew gum to stay alert","Keep the lab coat unbuttoned for ventilation"],
+    answer:0, domain:"SC" },
+  { q:"When wearing a lab coat in a laboratory, you should:",
+    choices:["Wear it to lunch and on breaks","Remove it when leaving the lab","Leave it unbuttoned so it is easy to remove","Wear it home to be ready for the next shift"],
+    answer:1, domain:"SC" },
+  { q:"Drawing blood from a patient receiving radiation therapy is an example of which hazard type?",
+    choices:["Biological","Chemical","Radiation","Electrical"],
+    answer:2, domain:"SC" },
+  { q:"Blood, tissue, and other body fluids are examples of which laboratory hazard?",
+    choices:["Chemical","Biological","Radiation","Fire"],
+    answer:1, domain:"SC" },
+  { q:"Which organization publishes National Patient Safety Goals (NPSGs) each year?",
+    choices:["CLSI","CDC","The Joint Commission (TJC)","OSHA"],
+    answer:2, domain:"SC" },
+  { q:"The CLSI primarily focuses on:",
+    choices:["Enforcing hospital accreditation","Developing standards to improve medical laboratory testing","Regulating medications","Vaccinating health care workers"],
+    answer:1, domain:"SC" },
+  { q:"The CDC’s standards for phlebotomists primarily focus on:",
+    choices:["Billing and insurance","Infection control, sharps safety, and universal precautions","Lab equipment pricing","Marketing health services"],
+    answer:1, domain:"SC" },
+  { q:"The minimum number of patient identifiers that must be verified before a procedure is:",
+    choices:["One","Two","Three","Four"],
+    answer:1, domain:"SC" },
+  { q:"Aseptic technique is defined as:",
+    choices:["Cleaning only after a procedure","A practice used to reduce the chance of microbial contamination","Sterilizing the patient","Reusing supplies safely"],
+    answer:1, domain:"SC" },
+  { q:"In the FAST stroke-recognition acronym, the \"F\" stands for:",
+    choices:["Falling","Face drooping","Fever","Fatigue"],
+    answer:1, domain:"SC" },
+  { q:"The appropriate first-aid response to syncope during a draw is to:",
+    choices:["Finish the draw quickly","Stop the procedure, loosen tight clothing, apply a cold compress, keep the patient reclined","Have the patient stand up and walk","Give the patient food immediately"],
+    answer:1, domain:"SC" },
+  { q:"If a patient shows signs of shock (pale, cold, clammy skin, rapid pulse), the phlebotomist should:",
+    choices:["Elevate the patient’s legs so the head is lower than the body and keep them lying down","Sit the patient up quickly","Offer food","Walk them to a chair"],
+    answer:0, domain:"SC" },
+  { q:"If blood collected during venipuncture is bright cherry red and filling the tube with force, the phlebotomist should suspect:",
+    choices:["Normal venous blood","Hemolyzed blood","An accidental artery puncture","A clotted sample"],
+    answer:2, domain:"SC" },
+  { q:"After an accidental arterial puncture, pressure should be applied to the site for:",
+    choices:["30 seconds","2 minutes","5 to 15 minutes","1 minute"],
+    answer:2, domain:"SC" },
+  { q:"After an accidental needlestick, the phlebotomist should seek medical care within:",
+    choices:["1 hour","6 hours","24 hours","1 week"],
+    answer:2, domain:"SC" },
+  { q:"The first-aid response for a patient experiencing a seizure is to:",
+    choices:["Restrain the patient to stop convulsions","Place something in the patient’s mouth","Stop the procedure, guide the patient to the floor, and place on side","Finish the collection quickly"],
+    answer:2, domain:"SC" },
+  { q:"The first-aid treatment for a hematoma forming during a draw is to:",
+    choices:["Continue drawing to finish the tube","Stop the procedure and apply pressure for at least 5 minutes","Massage the area","Apply heat"],
+    answer:1, domain:"SC" },
+  { q:"The adult CPR compression-to-breath ratio is:",
+    choices:["15:2","30:2","15:1","30:1"],
+    answer:1, domain:"SC" },
+  { q:"When performing CPR on an infant, chest compressions should be delivered using:",
+    choices:["The heel of one hand","Both thumbs on the center of the chest","Both palms stacked","One finger"],
+    answer:1, domain:"SC" },
+  { q:"Incident reports (for example, after a needlestick) are:",
+    choices:["Public records anyone can view","Confidential documents describing what occurred, actions taken, and corrective actions","Required only if the patient was injured","Optional in most settings"],
+    answer:1, domain:"SC" },
+  { q:"Patient documentation in the medical record must always be:",
+    choices:["Subjective and emotional","Factual and objective","Written in medical jargon the patient will not understand","Signed by the patient"],
+    answer:1, domain:"SC" },
+
+  // ========== PATIENT PREPARATION (PP) ==========
+  { q:"The communication cycle begins with the:",
+    choices:["Recipient’s reply","Sender’s idea or message","Feedback stage","Decoding of the message"],
+    answer:1, domain:"PP" },
+  { q:"Therapeutic communication is best defined as interaction designed to:",
+    choices:["Fill time during a draw","Improve a patient’s comfort, safety, trust, health, and well-being","Deliver test results verbally","Prevent patient questions"],
+    answer:1, domain:"PP" },
+  { q:"An example of an open-ended question is:",
+    choices:["“Does the pain hurt?”","“Are you nervous?”","“Describe the pain for me.”","“Did you eat today?”"],
+    answer:2, domain:"PP" },
+  { q:"Pace, tone, and volume are elements of:",
+    choices:["Nonverbal communication","Verbal communication","Feedback","Encoding"],
+    answer:1, domain:"PP" },
+  { q:"When communicating with a patient who has a hearing impairment, the phlebotomist should:",
+    choices:["Shout to be heard","Face the patient directly, speak clearly, and use a lower vocal pitch","Avoid eye contact","Speak only through an interpreter even for routine questions"],
+    answer:1, domain:"PP" },
+  { q:"If a deaf patient requests a sign language interpreter, the facility must provide one in compliance with the:",
+    choices:["Patients’ Bill of Rights","Americans with Disabilities Act (ADA)","HIPAA Privacy Rule","OSHA Bloodborne Pathogen Standard"],
+    answer:1, domain:"PP" },
+  { q:"When guiding a visually impaired patient, the phlebotomist should:",
+    choices:["Grab the patient’s arm and lead them","Offer the phlebotomist’s arm and verbally describe each step","Push the patient gently from behind","Hand them a map"],
+    answer:1, domain:"PP" },
+  { q:"When a service animal accompanies a patient, the phlebotomist should:",
+    choices:["Pet and talk to the animal to help the patient relax","Remember the animal is working and should not be distracted","Ask the patient to leave the animal outside","Remove the animal from the room"],
+    answer:1, domain:"PP" },
+  { q:"When starting a conversation with an older adult patient, the phlebotomist should:",
+    choices:["Automatically raise their voice","Speak in their usual tone unless the patient indicates hearing loss","Assume the patient cannot hear","Avoid eye contact to show respect"],
+    answer:1, domain:"PP" },
+  { q:"Patients should be identified by at least two identifiers such as:",
+    choices:["Room number and bed number","Full name and date of birth","Social Security number only","Diagnosis and provider name"],
+    answer:1, domain:"PP" },
+  { q:"Common specimens a phlebotomist may collect or instruct patients to collect include:",
+    choices:["Urine, stool, sputum, and semen","CSF and bone marrow","Only blood","Only urine"],
+    answer:0, domain:"PP" },
+  { q:"The typical volume for a random urine specimen is:",
+    choices:["10 mL","30 to 60 mL","200 mL","500 mL"],
+    answer:1, domain:"PP" },
+  { q:"A first-morning urine specimen is typically chosen because it is:",
+    choices:["Diluted","More concentrated, with a higher specific gravity","Warmer","Easier to collect"],
+    answer:1, domain:"PP" },
+  { q:"For a female clean-catch (midstream) urine collection, the patient should be instructed to:",
+    choices:["Wipe from back to front","Separate the labia and wipe each side front to back using a fresh antiseptic wipe","Skip cleansing","Use soap and water only"],
+    answer:1, domain:"PP" },
+  { q:"For a male clean-catch (midstream) urine, the patient should be instructed to:",
+    choices:["Collect the first stream only","Clean from the meatus outward in a circular motion and (if uncircumcised) retract the foreskin","Avoid cleansing","Collect urine in a non-sterile cup"],
+    answer:1, domain:"PP" },
+  { q:"The amount of urine required for a clean-catch collection is approximately:",
+    choices:["5 to 10 mL","30 to 100 mL","200 to 300 mL","All available urine"],
+    answer:1, domain:"PP" },
+  { q:"The typical container size used for a 24-hour urine collection is approximately:",
+    choices:["100 mL","500 mL","3,000 mL","10 L"],
+    answer:2, domain:"PP" },
+  { q:"At the start of a 24-hour urine collection, the patient should:",
+    choices:["Collect the first morning void","Discard the first morning void, then begin collecting all subsequent urine","Collect only midstream specimens","Collect only the last void of the day"],
+    answer:1, domain:"PP" },
+  { q:"If any urine is accidentally passed into the toilet during a 24-hour collection, the correct action is to:",
+    choices:["Estimate the lost volume","Continue; small losses do not matter","Restart the 24-hour collection","Add tap water to make up the volume"],
+    answer:2, domain:"PP" },
+  { q:"During a 24-hour urine collection, the specimen should be stored:",
+    choices:["At room temperature","Warmed in a heat block","Refrigerated or on ice","In direct sunlight"],
+    answer:2, domain:"PP" },
+  { q:"The expected pH range on a urine reagent strip is approximately:",
+    choices:["1 to 3","5 to 7","8 to 10","12 to 14"],
+    answer:1, domain:"PP" },
+  { q:"Normal urine specific gravity typically falls between:",
+    choices:["0.900 and 1.000","1.003 and 1.030","2.000 and 3.000","5.000 and 6.000"],
+    answer:1, domain:"PP" },
+  { q:"Glucose in a urine sample on a reagent strip may indicate:",
+    choices:["Normal hydration","Diabetes","Pregnancy","Dehydration only"],
+    answer:1, domain:"PP" },
+  { q:"The presence of ketones in urine may be caused by all of the following EXCEPT:",
+    choices:["Diabetes","Fasting","Excessive vomiting","Overhydration"],
+    answer:3, domain:"PP" },
+  { q:"White blood cells and nitrites in urine typically suggest:",
+    choices:["Dehydration","An infection","Liver disease","Normal findings"],
+    answer:1, domain:"PP" },
+  { q:"The fecal occult blood test (FOBT) is used to detect:",
+    choices:["Parasites in stool","Hidden (occult) blood in stool","Bacterial growth","Sputum pathogens"],
+    answer:1, domain:"PP" },
+  { q:"For 3 days before FOBT collection, patients should avoid:",
+    choices:["Water and electrolyte drinks","Red meat, citrus fruits, raw vegetables, vitamin C, and aspirin","All food","Dairy only"],
+    answer:1, domain:"PP" },
+  { q:"Stool samples collected for parasite testing should be:",
+    choices:["Refrigerated for 24 hours","Taken to the lab immediately and not refrigerated","Frozen","Placed in formalin only"],
+    answer:1, domain:"PP" },
+  { q:"For the most accurate sputum culture, the patient should collect the sample:",
+    choices:["Immediately after eating","Early in the morning before eating or drinking","After using mouthwash","Any time of day"],
+    answer:1, domain:"PP" },
+  { q:"The typical amount of sputum needed for a culture is:",
+    choices:["A few drops","1 to 2 teaspoons","100 mL","Half a cup"],
+    answer:1, domain:"PP" },
+  { q:"A semen specimen for analysis should be delivered to the laboratory, ideally:",
+    choices:["Within 1 hour of collection, kept warm","Within 24 hours, refrigerated","Frozen immediately","At the next business day"],
+    answer:0, domain:"PP" },
+
+  // ========== ROUTINE COLLECTIONS (RC) ==========
+  { q:"Routine venipunctures are typically performed using which blood collection system?",
+    choices:["Syringe only","Evacuated tube system (ETS)","Butterfly only","Catheter draws"],
+    answer:1, domain:"RC" },
+  { q:"A tourniquet should be applied how far above the venipuncture site?",
+    choices:["1 inch","3 to 4 inches","6 to 8 inches","At the wrist"],
+    answer:1, domain:"RC" },
+  { q:"A tourniquet should remain in place for no longer than:",
+    choices:["30 seconds","1 minute","3 minutes","5 minutes"],
+    answer:1, domain:"RC" },
+  { q:"Prolonged tourniquet application can cause:",
+    choices:["Hemodilution","Hemoconcentration","Hemolysis of only platelets","Clot formation in the tube only"],
+    answer:1, domain:"RC" },
+  { q:"Hemoconcentration is defined as:",
+    choices:["Thin, diluted blood","Excess of blood accumulated in an area of the body","Clot formation in the needle","Low red cell count"],
+    answer:1, domain:"RC" },
+  { q:"If a blood pressure cuff is used in place of a tourniquet, it should be inflated to approximately:",
+    choices:["20 mm Hg","40 mm Hg","80 mm Hg","120 mm Hg"],
+    answer:1, domain:"RC" },
+  { q:"The typical needle gauge range for routine adult venipuncture is:",
+    choices:["16 to 18","21 to 23","25 to 27","28 to 30"],
+    answer:1, domain:"RC" },
+  { q:"With needle gauges, the smaller the gauge number, the:",
+    choices:["Smaller the needle diameter","Larger the needle diameter","Shorter the needle","Weaker the vacuum"],
+    answer:1, domain:"RC" },
+  { q:"The first-choice vein for venipuncture in the antecubital region is the:",
+    choices:["Cephalic","Basilic","Median cubital","Radial"],
+    answer:2, domain:"RC" },
+  { q:"The second-choice vein for venipuncture in the antecubital region is the:",
+    choices:["Basilic","Cephalic","Brachial","Median nerve"],
+    answer:1, domain:"RC" },
+  { q:"The basilic vein is considered the LAST choice because it:",
+    choices:["Is too small to find","Lies close to the median nerve and brachial artery and rolls easily","Is only present in some patients","Is in the hand"],
+    answer:1, domain:"RC" },
+  { q:"The alcohol most commonly used for routine venipuncture site cleansing is:",
+    choices:["50% ethanol","70% isopropyl or ethyl alcohol","100% methanol","Benzalkonium chloride"],
+    answer:1, domain:"RC" },
+  { q:"For blood alcohol specimens, which cleanser must be used?",
+    choices:["70% isopropyl alcohol","Non-alcohol-based cleanser","Any alcohol pad","Chlorhexidine gluconate only"],
+    answer:1, domain:"RC" },
+  { q:"Cotton balls should NOT be used at the venipuncture site because they can:",
+    choices:["Dissolve in blood","Rip off a scab or leave fibers on the insertion site","Cause allergic reactions in all patients","Interfere with lab results"],
+    answer:1, domain:"RC" },
+  { q:"When cleansing the venipuncture site with alcohol, you should:",
+    choices:["Blow or fan the area dry","Allow it to air dry for 30 seconds to 1 minute","Wipe it off immediately with gauze","Reapply alcohol if dry"],
+    answer:1, domain:"RC" },
+  { q:"The correct needle insertion angle for a routine venipuncture is:",
+    choices:["5 degrees or less","15 to 30 degrees","45 degrees","90 degrees"],
+    answer:1, domain:"RC" },
+  { q:"When inserting the needle, the bevel should be:",
+    choices:["Facing down","Facing up","Facing sideways","Any direction"],
+    answer:1, domain:"RC" },
+  { q:"The target “lumen” of a vein refers to the:",
+    choices:["Outer wall of the vein","Middle (inside) of the vein","Valve area","Branch of the vein"],
+    answer:1, domain:"RC" },
+  { q:"While palpating, if the phlebotomist feels a pulse, they are palpating a(n):",
+    choices:["Tendon","Vein","Artery","Nerve"],
+    answer:2, domain:"RC" },
+  { q:"While palpating, a firm chord-like structure most likely is a(n):",
+    choices:["Vein","Tendon","Artery","Nerve"],
+    answer:1, domain:"RC" },
+  { q:"Vigorous opening and closing of the fist (“pumping”) during a draw can falsely elevate:",
+    choices:["Sodium","Potassium","Glucose","Chloride"],
+    answer:1, domain:"RC" },
+  { q:"The correct instruction to the patient regarding the fist during venipuncture is to:",
+    choices:["Open and close the fist repeatedly","Clench and hold the fist still","Keep the fist completely relaxed","Squeeze a stress ball"],
+    answer:1, domain:"RC" },
+  { q:"In the standard order of draw, which tube is drawn FIRST?",
+    choices:["Light blue","Red (serum)","Yellow (blood culture) / blood culture bottles","Lavender"],
+    answer:2, domain:"RC" },
+  { q:"In the order of draw, the light blue tube is drawn immediately:",
+    choices:["Before the blood culture","After the blood culture / before serum tubes","After the lavender","Last"],
+    answer:1, domain:"RC" },
+  { q:"The additive in a light blue tube is:",
+    choices:["EDTA","Sodium citrate","Lithium heparin","Sodium fluoride"],
+    answer:1, domain:"RC" },
+  { q:"The number of inversions recommended for a light blue tube is:",
+    choices:["3 to 4","5","8","None"],
+    answer:0, domain:"RC" },
+  { q:"The light blue tube is used primarily for:",
+    choices:["Hematology","Coagulation testing","Chemistry","Blood bank"],
+    answer:1, domain:"RC" },
+  { q:"A red-top tube (plain) contains:",
+    choices:["Sodium citrate","EDTA","No additive","Heparin"],
+    answer:2, domain:"RC" },
+  { q:"The red (plain) tube is typically inverted:",
+    choices:["3 to 4 times","5 times","8 times","Never"],
+    answer:1, domain:"RC" },
+  { q:"The red/gray marbled (SST) tube contains:",
+    choices:["Lithium heparin","Silica clot activator and gel for serum separation","EDTA","Sodium fluoride"],
+    answer:1, domain:"RC" },
+  { q:"The green-top tube contains:",
+    choices:["EDTA","Sodium citrate","Heparin","Potassium oxalate"],
+    answer:2, domain:"RC" },
+  { q:"The number of inversions recommended for a green tube is:",
+    choices:["3 to 4","5","8","None"],
+    answer:2, domain:"RC" },
+  { q:"The green-top tube is primarily used for:",
+    choices:["Hematology","Coagulation","Chemistry","Blood cultures"],
+    answer:2, domain:"RC" },
+  { q:"The lavender-top tube contains:",
+    choices:["Heparin","Sodium citrate","EDTA","Sodium fluoride"],
+    answer:2, domain:"RC" },
+  { q:"The lavender tube is primarily used for:",
+    choices:["Chemistry","Hematology","Coagulation","Blood cultures"],
+    answer:1, domain:"RC" },
+  { q:"The gray-top tube contains:",
+    choices:["EDTA","Potassium oxalate and sodium fluoride","Heparin","Sodium citrate"],
+    answer:1, domain:"RC" },
+  { q:"The gray-top tube is primarily used for:",
+    choices:["Hematology","Chemistry testing, especially glucose and alcohol levels","Coagulation","Blood bank"],
+    answer:1, domain:"RC" },
+  { q:"In a gray-top tube, fluoride works by:",
+    choices:["Removing fibrinogen","Inhibiting glycolysis","Activating clotting","Preserving platelets"],
+    answer:1, domain:"RC" },
+  { q:"The yellow-top SPS tube is primarily used for:",
+    choices:["Blood or body fluid cultures","Coagulation testing","Blood bank","CBC"],
+    answer:0, domain:"RC" },
+  { q:"The additive in a yellow-top SPS blood culture tube is:",
+    choices:["Sodium polyanethol sulfonate (SPS)","EDTA","Heparin","Thrombin"],
+    answer:0, domain:"RC" },
+  { q:"Serum tubes should be allowed to clot before centrifugation for approximately:",
+    choices:["5 minutes","15 minutes","30 to 60 minutes","2 hours"],
+    answer:2, domain:"RC" },
+  { q:"Plasma, in contrast to serum, can be centrifuged:",
+    choices:["Only after 24 hours","Immediately after collection","Only after refrigeration","Never"],
+    answer:1, domain:"RC" },
+  { q:"Expired evacuated tubes should not be used because:",
+    choices:["The additive color may fade","The vacuum is reduced and the additive quality may be degraded","They cost more","The label will not stick"],
+    answer:1, domain:"RC" },
+  { q:"To estimate an infant’s blood volume, convert their weight to kilograms and then multiply by:",
+    choices:["10 (to get mL)","100 (to get mL)","1,000 (to get mL)","2.2 (to get mL)"],
+    answer:1, domain:"RC" },
+  { q:"Over a short period, no more than what percentage of an infant’s blood volume should be collected?",
+    choices:["1%","5%","10%","25%"],
+    answer:2, domain:"RC" },
+  { q:"To anchor a vein, the phlebotomist uses the thumb of the nondominant hand placed approximately:",
+    choices:["Directly over the vein","1 to 2 inches BELOW the venipuncture site","3 to 4 inches above the site","At the wrist"],
+    answer:1, domain:"RC" },
+  { q:"After blood flow has been established in the first tube, the phlebotomist should:",
+    choices:["Keep the tourniquet in place for the entire draw","Release the tourniquet and have the patient relax and open the fist","Immediately pull the needle out","Reposition the needle deeper"],
+    answer:1, domain:"RC" },
+  { q:"Venous blood is normally what color?",
+    choices:["Bright cherry red","Dark red to reddish-brown","Pink","Clear"],
+    answer:1, domain:"RC" },
+  { q:"After a venipuncture, pressure should be applied to the site for at least:",
+    choices:["5 to 10 seconds (or until bleeding stops)","2 seconds","1 minute (always)","5 minutes (always)"],
+    answer:0, domain:"RC" },
+  { q:"The patient should be instructed to leave the bandage on for at least:",
+    choices:["1 minute","5 minutes","15 minutes","1 hour"],
+    answer:2, domain:"RC" },
+  { q:"Required information on a filled-vacuum-tube label includes:",
+    choices:["Patient name, date of birth, medical record number, and date/time of collection","Patient name, Social Security number, room number, and gender","Provider name, test ordered, insurance ID","Patient diagnosis and address"],
+    answer:0, domain:"RC" },
+  { q:"The “Three Ds” of finding a good vein are:",
+    choices:["Diameter, Density, Distance","Dimension, Depth, Direction","Dorsal, Distal, Deep","Depth, Diameter, Dryness"],
+    answer:1, domain:"RC" },
+  { q:"When choosing between a 15° and 30° insertion angle, you should choose:",
+    choices:["Always 15°","Always 30°","15° for a shallow vein and closer to 30° for a deeper vein","Any angle; it does not matter"],
+    answer:2, domain:"RC" },
+  { q:"A butterfly (winged infusion) needle is typically indicated for:",
+    choices:["Large, easily accessed antecubital veins","Small, difficult-to-access veins","Only blood cultures","Arterial draws"],
+    answer:1, domain:"RC" },
+  { q:"Using a 25-gauge needle on an adult venipuncture is NOT preferred because it can:",
+    choices:["Clot the sample","Hemolyze the blood and lead to inaccurate results","Hurt less than larger needles","Deliver blood too quickly"],
+    answer:1, domain:"RC" },
+  { q:"A patient with latex allergy should NEVER receive:",
+    choices:["EDTA tubes","Latex-based bandages","Alcohol pads","Chlorhexidine"],
+    answer:1, domain:"RC" },
+  { q:"If a patient uses a wheelchair, the best practice for venipuncture is to:",
+    choices:["Always move the patient to a blood-collection chair","Perform the draw in the wheelchair with the brakes set","Have the patient stand","Refuse the collection"],
+    answer:1, domain:"RC" },
+  { q:"Sharps containers must be:",
+    choices:["Leak-resistant, puncture-proof, and have a locking lid with a biohazard label","Open-topped for easy access","Made of cardboard","Washed and reused"],
+    answer:0, domain:"RC" },
+  { q:"A sharps container should NOT be used when it is:",
+    choices:["More than one-quarter full","Filled past its fill line","Any level of fullness","Older than a week"],
+    answer:1, domain:"RC" },
+  { q:"If a hematoma begins to form during a draw, you should:",
+    choices:["Continue the draw","Immediately discontinue, remove the needle, and apply pressure","Reposition the needle deeper","Apply a tourniquet above the site"],
+    answer:1, domain:"RC" },
+  { q:"Venipuncture on the foot or ankle may be performed only:",
+    choices:["Routinely in all patients","With the ordering provider’s permission","When the patient requests it","After 10 PM"],
+    answer:1, domain:"RC" },
+  { q:"After each tube is filled, the phlebotomist should:",
+    choices:["Shake it vigorously","Gently invert it the recommended number of times","Centrifuge it immediately","Store it on ice"],
+    answer:1, domain:"RC" },
+  { q:"Choosing an evacuated tube that is cracked or split should result in:",
+    choices:["Using it anyway if the vacuum feels fine","Discarding it and selecting an undamaged tube","Taping it up","Centrifuging it to check"],
+    answer:1, domain:"RC" },
+  { q:"The dorsal part of the hand is typically used when:",
+    choices:["Blood cultures are needed","The antecubital veins are not accessible or appropriate","The patient prefers it","The arm is too cold"],
+    answer:1, domain:"RC" },
+  { q:"Red/gold or SST tubes typically yield what portion for testing?",
+    choices:["Serum","Plasma","Whole blood","Buffy coat"],
+    answer:0, domain:"RC" },
+  { q:"Over a 24-hour period, no more than what percentage of a child’s or infant’s blood volume should be collected?",
+    choices:["1% to 5%","10% to 20%","20% to 30%","50%"],
+    answer:0, domain:"RC" },
+  { q:"If you accidentally collect tubes in the wrong order, the main concern is that:",
+    choices:["The lab will not notice","Additives can be carried from one tube to the next, altering results","The tubes will leak","Only labeling will be affected"],
+    answer:1, domain:"RC" },
+  { q:"The tube holder used in the evacuated tube system is:",
+    choices:["Multi-use after cleaning","Single-use and should be discarded after each patient","Reusable up to 10 patients","Autoclaved between uses"],
+    answer:1, domain:"RC" },
+
+  // ========== SPECIAL COLLECTIONS (SP) ==========
+  { q:"Blood cultures are collected primarily to:",
+    choices:["Measure glucose","Determine if a patient has a bacterial infection","Check clotting times","Check kidney function"],
+    answer:1, domain:"SP" },
+  { q:"A standard blood culture set consists of:",
+    choices:["Two aerobic bottles","Two anaerobic bottles","One aerobic and one anaerobic bottle","One bottle for both"],
+    answer:2, domain:"SP" },
+  { q:"The typical total blood volume collected from an adult for a blood culture set is:",
+    choices:["5 to 10 mL","20 to 30 mL","50 mL","100 mL"],
+    answer:1, domain:"SP" },
+  { q:"When explaining the volume to a patient, 5 mL of blood is roughly equivalent to:",
+    choices:["1 teaspoon","1 tablespoon","1 ounce","1 cup"],
+    answer:0, domain:"SP" },
+  { q:"In the order of draw, blood cultures are drawn:",
+    choices:["Last, to avoid contamination of other tubes","First, to reduce the risk of contamination of the culture","Any time; order does not matter","Only with syringes"],
+    answer:1, domain:"SP" },
+  { q:"When using a butterfly needle for blood cultures, the first bottle filled should be the:",
+    choices:["Anaerobic bottle (to purge air)","Aerobic bottle (since the butterfly tubing contains air)","Either; it does not matter","Pediatric bottle"],
+    answer:1, domain:"SP" },
+  { q:"Acceptable antiseptics for blood culture site preparation include:",
+    choices:["Hydrogen peroxide only","Povidone-iodine, chlorhexidine gluconate, or a povidone/70% ethyl alcohol combination","Soap and water only","Benzalkonium chloride only"],
+    answer:1, domain:"SP" },
+  { q:"When cleansing the skin for a blood culture, the site should be scrubbed with friction for a minimum of:",
+    choices:["5 seconds","10 seconds","30 seconds","2 minutes"],
+    answer:2, domain:"SP" },
+  { q:"After cleansing a blood culture site, the phlebotomist should:",
+    choices:["Blow on the area to speed drying","Not touch the site — even with gloved hands — before puncture","Repalpate the vein to confirm location","Reapply alcohol for extra protection"],
+    answer:1, domain:"SP" },
+  { q:"CLSI recommends performing blood cultures from:",
+    choices:["Any accessible vein","An upper-extremity venipuncture site","The foot","Capillary heel sticks"],
+    answer:1, domain:"SP" },
+  { q:"After a blood culture draw, excess povidone-iodine should be:",
+    choices:["Left on to continue disinfecting","Wiped off before bandaging to reduce skin irritation","Covered with the bandage","Rinsed with alcohol"],
+    answer:1, domain:"SP" },
+  { q:"A throat culture is typically used to:",
+    choices:["Confirm liver function","Confirm and identify a patient’s illness by sampling throat secretions","Measure clotting time","Screen for diabetes"],
+    answer:1, domain:"SP" },
+  { q:"When performing a throat culture, the swab should be used to swab:",
+    choices:["Only the tongue","The tonsils and any red areas","The cheek","The lips"],
+    answer:1, domain:"SP" },
+  { q:"For a nasal swab, the swab should be inserted into the nostril a minimum of:",
+    choices:["0.1 cm","1.27 cm (0.5 in)","5 cm","10 cm"],
+    answer:1, domain:"SP" },
+  { q:"During a nasal swab, the swab should be rolled inside each nostril for approximately:",
+    choices:["2 seconds","15 seconds","1 minute","5 minutes"],
+    answer:1, domain:"SP" },
+  { q:"When performing a nasal swab on a highly contagious patient, additional PPE should include:",
+    choices:["Only gloves","An N95 respirator plus face shield, mask, and gown","Only a surgical mask","Only a gown"],
+    answer:1, domain:"SP" },
+  { q:"Wound cultures should be collected:",
+    choices:["Without PPE if the wound is small","Aseptically, with all recommended PPE","After rinsing with tap water","Only after bandage removal by the patient"],
+    answer:1, domain:"SP" },
+  { q:"Urine reagent-strip testing is considered:",
+    choices:["A moderate-complexity test","A CLIA-waived test","A nonwaived test only pathologists can run","A high-complexity test"],
+    answer:1, domain:"SP" },
+  { q:"If a point-of-care test is NOT a CLIA-waived test, a certified phlebotomist should:",
+    choices:["Perform it anyway","Not perform that test","Perform it only once","Perform only the first step"],
+    answer:1, domain:"SP" },
+  { q:"When law enforcement requests a toxicology or forensic specimen (for example, a blood alcohol level), the special protocol followed is:",
+    choices:["Chain of custody","HIPAA release","Advanced directive","Universal precautions"],
+    answer:0, domain:"SP" },
+
+  // ========== PROCESSING (PR) ==========
+  { q:"To maintain specimen integrity during transport, tubes should be transported:",
+    choices:["Horizontally","Vertically, with the stopper intact and upright","Upside down","Shaken continuously"],
+    answer:1, domain:"PR" },
+  { q:"CLSI and OSHA require specimens to be transported in a bag with:",
+    choices:["A biohazard logo, liquid-tight closure, and a slip pocket for paperwork","A plain plastic bag with no markings","A paper envelope","A metal container only"],
+    answer:0, domain:"PR" },
+  { q:"According to CLSI guidelines, the maximum time a specimen should remain unprocessed before analysis is approximately:",
+    choices:["30 minutes","1 hour","2 hours","6 hours"],
+    answer:2, domain:"PR" },
+  { q:"Room temperature as defined for specimen handling is approximately:",
+    choices:["0° C to 10° C","20° C to 30° C (average 25° C)","37° C to 40° C","−20° C or lower"],
+    answer:1, domain:"PR" },
+  { q:"Body temperature as defined for specimen handling is approximately:",
+    choices:["20° C","25° C","37° C (average)","40° C"],
+    answer:2, domain:"PR" },
+  { q:"Refrigerated specimen storage temperature is approximately:",
+    choices:["2° C to 10° C","15° C to 20° C","25° C to 30° C","−20° C"],
+    answer:0, domain:"PR" },
+  { q:"Frozen specimen storage is typically at or below:",
+    choices:["0° C","−4° C","−20° C (or lower)","−2° C"],
+    answer:2, domain:"PR" },
+  { q:"To obtain accurate ammonia results, the specimen should be:",
+    choices:["Kept at room temperature","Immediately placed on ice, transported STAT, and plasma separated within 15 minutes","Frozen on collection","Protected from light only"],
+    answer:1, domain:"PR" },
+  { q:"When transporting a specimen on ice, you should chill:",
+    choices:["All tubes drawn from the patient","Only the tube requiring chilling","Only the serum tube","All tubes refrigerated for 24 hours first"],
+    answer:1, domain:"PR" },
+  { q:"A small portable heat block used to transport a body-temperature specimen is stored in a 37° C incubator and holds that temperature for about:",
+    choices:["1 minute","15 minutes","1 hour","4 hours"],
+    answer:1, domain:"PR" },
+  { q:"Bilirubin can lose how much of its concentration after 1 hour of light exposure?",
+    choices:["5%","15%","50%","100%"],
+    answer:2, domain:"PR" },
+  { q:"Which of the following is NOT an acceptable way to protect a photosensitive specimen during transport?",
+    choices:["Aluminum foil","Amber tubes","Biohazard bags","Clear plastic sleeves"],
+    answer:3, domain:"PR" },
+  { q:"Before centrifuging a serum tube, the phlebotomist must verify that the specimen is:",
+    choices:["Shaken to mix","Completely clotted","Cold","Diluted with saline"],
+    answer:1, domain:"PR" },
+  { q:"Typical complete clotting time at room temperature is:",
+    choices:["5 to 10 minutes","15 minutes","30 to 60 minutes","4 hours"],
+    answer:2, domain:"PR" },
+  { q:"When loading a centrifuge with a single specimen tube, you should:",
+    choices:["Leave the opposite well empty","Balance it with a tube of the same size filled with the same volume of water","Add paper to counterweight","Use any random tube to balance"],
+    answer:1, domain:"PR" },
+  { q:"Which of the following during centrifuge operation suggests the centrifuge is UNBALANCED and should be turned off?",
+    choices:["Normal humming","Excessive shaking, noise, or vibration","Even acceleration","Steady LED display"],
+    answer:1, domain:"PR" },
+  { q:"Double-centrifuging a specimen can:",
+    choices:["Improve accuracy","Cause hemolysis and alter test results","Preserve the sample longer","Separate it more thoroughly without harm"],
+    answer:1, domain:"PR" },
+  { q:"Removing the stopper during centrifugation can:",
+    choices:["Have no effect","Cause loss of carbon dioxide and an increase in pH","Preserve the sample","Cool the sample"],
+    answer:1, domain:"PR" },
+  { q:"An aliquot is best defined as:",
+    choices:["A full specimen tube","A portion of a specimen used for testing","A centrifuged red cell layer","A biohazard container"],
+    answer:1, domain:"PR" },
+  { q:"When transferring serum/plasma into an aliquot tube, a phlebotomist should always use:",
+    choices:["A straw","A pipette (never pour)","A pouring motion to speed the process","A syringe needle"],
+    answer:1, domain:"PR" },
+  { q:"CLSI recognizes that serum or plasma aliquots can stay at room temperature for no longer than:",
+    choices:["30 minutes","2 hours","8 hours","24 hours"],
+    answer:2, domain:"PR" },
+  { q:"If testing cannot be completed within the room-temperature window, aliquots should be refrigerated at:",
+    choices:["0° C to 2° C","2° C to 8° C","10° C to 15° C","20° C to 25° C"],
+    answer:1, domain:"PR" },
+  { q:"If an aliquot must be stored for 48 hours or more, it should be frozen at:",
+    choices:["0° C","Below −20° C","−5° C","4° C"],
+    answer:1, domain:"PR" },
+  { q:"Frozen samples should be thawed:",
+    choices:["In a microwave","At room temperature and inverted 10 to 20 times before testing","In boiling water","Overnight in the refrigerator only"],
+    answer:1, domain:"PR" },
+  { q:"Aliquots of serum or plasma should undergo freezing and thawing:",
+    choices:["As many times as needed","Only once","At least twice","Never"],
+    answer:1, domain:"PR" },
+  { q:"Hemolysis occurs when:",
+    choices:["Platelets clump","Red blood cells are damaged and hemoglobin leaks into the fluid portion","White cells are destroyed","Clotting factors activate"],
+    answer:1, domain:"PR" },
+  { q:"The MOST frequent cause of chemistry specimen rejection is:",
+    choices:["Clotting","Hemolysis","Light exposure","Wrong tube color"],
+    answer:1, domain:"PR" },
+  { q:"The primary reason for specimen rejection in hematology is:",
+    choices:["Hemolysis","Clotting of the blood sample","Short draw of serum","Excess additive"],
+    answer:1, domain:"PR" },
+  { q:"The chain of custody applies MOST specifically to:",
+    choices:["Routine CBCs","Forensic specimens (for example, blood alcohol, drug screens, DNA, paternity)","All chemistry panels","Pediatric lead levels only"],
+    answer:1, domain:"PR" },
+  { q:"A chain-of-custody record must include the collector’s name, the specimen number, the date, and:",
+    choices:["The patient’s diagnosis","The signature of the individual the specimen was obtained from","The provider’s license number","The hospital’s billing code"],
+    answer:1, domain:"PR" },
+  { q:"The main purpose of a Laboratory Information System (LIS) is to:",
+    choices:["Replace phlebotomists","Automate ordering, tracking, result reporting, and billing within the lab","Measure room temperature","Clean lab equipment"],
+    answer:1, domain:"PR" },
+  { q:"In LIS mnemonic coding, “5 mL LAV” indicates:",
+    choices:["5 mL of blood is needed in a lavender tube","5 L of lavender dye","5 vials of liquid","5 minutes to collect"],
+    answer:0, domain:"PR" },
+  { q:"Point-of-care testing (POCT) is also known as:",
+    choices:["Automated lab testing","Alternate site, bedside, or near-patient testing","Reference lab testing","Blood-bank testing"],
+    answer:1, domain:"PR" },
+  { q:"When verbally reporting a critical value, the phlebotomist should:",
+    choices:["Report quickly without confirming receipt","Ensure the recipient is authorized, have them record the value, and read it back to confirm","Email the result","Leave a voicemail"],
+    answer:1, domain:"PR" },
+  { q:"“Read-back” of a critical value is used to:",
+    choices:["Satisfy insurance billing","Confirm the accuracy of information that was written down","Shorten the call","Alert the patient"],
+    answer:1, domain:"PR" },
+  { q:"When a specimen must be recollected, the phlebotomist should:",
+    choices:["Avoid telling the patient the first draw failed","Communicate honestly, explain the importance of the redraw, and act promptly","Delay the redraw to let the patient recover for a day","Send someone else"],
+    answer:1, domain:"PR" },
+];
+
+const TARGET_COUNT = 25;
+const HISTORY_KEY = 'nhaCptBaselineHistory';
+const CURRENT_KEY = 'nhaCptBaselineCurrent';
+
+const main = document.getElementById('main');
+const newBtn = document.getElementById('newBtn');
+const submitBtn = document.getElementById('submitBtn');
+const revealBtn = document.getElementById('revealBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const historyBtn = document.getElementById('historyBtn');
+const progressEl = document.getElementById('progress');
+const testIdLabel = document.getElementById('testIdLabel');
+
+let currentTest = null; // { id, timestamp, questions: [...], answers: [idx|null], graded, score, total, pct, mode }
+
+function uuid() {
+  // Short time-based id
+  const d = new Date();
+  const pad = (n, l=2) => String(n).padStart(l, '0');
+  return `T${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}-${Math.random().toString(36).slice(2,6)}`;
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRandom(n) {
+  return shuffle(QUESTIONS).slice(0, n);
+}
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch { return []; }
+}
+
+function saveHistory(list) {
+  // Cap at 50 to keep storage small
+  const capped = list.slice(0, 50);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(capped));
+}
+
+function upsertHistory(test) {
+  const list = loadHistory();
+  const idx = list.findIndex(t => t.id === test.id);
+  if (idx >= 0) list[idx] = test;
+  else list.unshift(test); // newest first
+  saveHistory(list);
+}
+
+function saveCurrent() {
+  if (currentTest) localStorage.setItem(CURRENT_KEY, JSON.stringify(currentTest));
+}
+
+function loadCurrent() {
+  try { return JSON.parse(localStorage.getItem(CURRENT_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function domainName(code) {
+  return {
+    SC: "Safety & Compliance",
+    PP: "Patient Prep",
+    RC: "Routine Collections",
+    SP: "Special Collections",
+    PR: "Processing"
+  }[code] || code;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderTest(readOnly=false) {
+  if (!currentTest) {
+    main.innerHTML = '<div class="empty">Click <b>New Test</b> to begin a 25-question practice set.</div>';
+    testIdLabel.textContent = '';
+    return;
+  }
+  const scoreHtml = currentTest.graded ? renderScoreCard(currentTest) : '';
+  let html = scoreHtml;
+  currentTest.questions.forEach((item, idx) => {
+    const userAns = currentTest.answers[idx];
+    html += `<div class="question" data-idx="${idx}">
+      <div class="q-header">
+        <div class="q-num">${idx + 1}.</div>
+        <div class="q-text">${escapeHtml(item.q)}</div>
+      </div>
+      <div class="options">
+        ${item.choices.map((c, i) => {
+          const checked = userAns === i ? 'checked' : '';
+          const disabled = (readOnly || currentTest.graded) ? 'disabled' : '';
+          let cls = 'option';
+          if (currentTest.graded) {
+            if (i === item.answer && i === userAns) cls += ' correct';
+            else if (i === item.answer) cls += ' correct-missed';
+            else if (i === userAns) cls += ' wrong';
+          }
+          return `<label class="${cls}" data-choice="${i}">
+            <input type="radio" name="q${idx}" value="${i}" ${checked} ${disabled}>
+            <b>${String.fromCharCode(65 + i)}.</b> ${escapeHtml(c)}
+          </label>`;
+        }).join('')}
+      </div>
+      <div class="domain">Domain: ${domainName(item.domain)}${
+        currentTest.graded
+          ? ` &middot; ${userAns === item.answer ? '<span style="color:#1e8449;font-weight:700;">Correct</span>' : (userAns == null ? '<span style="color:#6b7280;font-weight:700;">Skipped</span>' : '<span style="color:#c0392b;font-weight:700;">Incorrect</span>')}`
+          : ''
+      }</div>
+    </div>`;
+  });
+  main.innerHTML = html;
+  updateProgress();
+  main.querySelectorAll('input[type="radio"]').forEach(r => {
+    r.addEventListener('change', (e) => {
+      const name = e.target.name; // qIDX
+      const idx = parseInt(name.slice(1), 10);
+      currentTest.answers[idx] = parseInt(e.target.value, 10);
+      saveCurrent();
+      updateProgress();
+    });
+  });
+  testIdLabel.textContent = `Test ID: ${currentTest.id} • ${new Date(currentTest.timestamp).toLocaleString()}`;
+}
+
+function renderScoreCard(t) {
+  const domainStats = {};
+  t.questions.forEach((item, idx) => {
+    if (!domainStats[item.domain]) domainStats[item.domain] = { right: 0, total: 0 };
+    domainStats[item.domain].total++;
+    if (t.answers[idx] === item.answer) domainStats[item.domain].right++;
+  });
+  const pass = t.pct >= 75;
+  return `
+    <div class="score-card">
+      <div style="font-size:14px; opacity:0.85;">YOUR SCORE</div>
+      <div class="big ${pass ? 'pass' : 'fail'}">${t.score} / ${t.total} &nbsp; (${t.pct}%)</div>
+      <div>${pass ? 'Pass — keep practicing!' : 'Below 75% — review the missed items.'}</div>
+      <div class="domain-breakdown">
+        ${Object.entries(domainStats).map(([d, s]) => `
+          <div class="domain-stat">
+            <div>${domainName(d)}</div>
+            <div class="num">${s.right}/${s.total}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function updateProgress() {
+  if (!currentTest) { progressEl.textContent = ''; return; }
+  const answered = currentTest.answers.filter(a => a != null).length;
+  if (currentTest.graded) {
+    progressEl.textContent = `Graded: ${currentTest.score}/${currentTest.total} (${currentTest.pct}%)`;
+  } else {
+    progressEl.textContent = `Answered ${answered} / ${currentTest.total}`;
+  }
+}
+
+function startNewTest() {
+  const picked = pickRandom(TARGET_COUNT);
+  currentTest = {
+    id: uuid(),
+    timestamp: Date.now(),
+    questions: picked,
+    answers: picked.map(() => null),
+    graded: false,
+    score: 0,
+    total: picked.length,
+    pct: 0
+  };
+  saveCurrent();
+  upsertHistory(currentTest);
+  renderTest();
+  revealBtn.disabled = true;
+  submitBtn.disabled = false;
+  downloadBtn.disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function gradeCurrent() {
+  if (!currentTest) return;
+  let correct = 0;
+  currentTest.questions.forEach((item, idx) => {
+    if (currentTest.answers[idx] === item.answer) correct++;
+  });
+  currentTest.score = correct;
+  currentTest.pct = Math.round((correct / currentTest.total) * 100);
+  currentTest.graded = true;
+  saveCurrent();
+  upsertHistory(currentTest);
+  renderTest();
+  submitBtn.disabled = true;
+  revealBtn.disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showAnswerKey() {
+  if (!currentTest) return;
+  let html = '<div class="score-card"><div style="font-size:18px; font-weight:700;">Answer Key</div></div>';
+  html += '<ol style="line-height:1.8;">';
+  currentTest.questions.forEach(item => {
+    const letter = String.fromCharCode(65 + item.answer);
+    html += `<li style="margin-bottom:10px;"><b>${escapeHtml(item.q)}</b><br>
+      <span style="color:#1e8449;"><b>Answer: ${letter}.</b> ${escapeHtml(item.choices[item.answer])}</span>
+      <div class="domain" style="margin-left:0;">Domain: ${domainName(item.domain)}</div></li>`;
+  });
+  html += '</ol>';
+  html += '<button class="secondary" onclick="renderTest()">← Back to test view</button>';
+  main.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function downloadTest(test) {
+  if (!test) return;
+  const ts = new Date(test.timestamp);
+  const header = `NHA CPT Baseline Practice Test\nTest ID: ${test.id}\nStarted: ${ts.toLocaleString()}\nStatus: ${test.graded ? `Graded ${test.score}/${test.total} (${test.pct}%)` : 'Not graded'}\n\n`;
+  const body = test.questions.map((item, idx) => {
+    const letters = ['A','B','C','D','E','F'];
+    const choices = item.choices.map((c, i) => `  ${letters[i]}. ${c}`).join('\n');
+    const yourAns = test.answers[idx] != null ? letters[test.answers[idx]] : '(skipped)';
+    const correctAns = letters[item.answer];
+    const mark = test.graded ? (test.answers[idx] === item.answer ? '[Correct]' : '[Incorrect]') : '';
+    return `Q${idx+1} [${domainName(item.domain)}] ${mark}\n${item.q}\n${choices}\nYour answer: ${yourAns}\nCorrect answer: ${correctAns}. ${item.choices[item.answer]}\n`;
+  }).join('\n');
+  const blob = new Blob([header + body], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${test.id}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function renderHistory() {
+  const list = loadHistory();
+  if (!list.length) {
+    main.innerHTML = `<h2 style="margin-top:0;">Past Tests</h2>
+      <div class="empty">No past tests yet. Click <b>New Test</b> to begin.</div>
+      <button class="secondary" onclick="renderTest()">← Back</button>`;
+    return;
+  }
+  let html = `<h2 style="margin-top:0;">Past Tests <span style="font-size:13px; color:#6b7280; font-weight:400;">(${list.length} saved)</span></h2>`;
+  html += '<ul class="history-list">';
+  list.forEach(t => {
+    const ts = new Date(t.timestamp);
+    let scoreCls = 'ungraded';
+    let scoreTxt = 'Not graded';
+    if (t.graded) {
+      scoreCls = t.pct >= 75 ? 'pass' : 'fail';
+      scoreTxt = `${t.score}/${t.total} (${t.pct}%)`;
+    }
+    html += `<li class="history-item">
+      <div>
+        <div class="hi-title">${escapeHtml(t.id)}</div>
+        <div class="hi-meta">${ts.toLocaleString()} &middot; ${t.total} questions</div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <span class="hi-score ${scoreCls}">${scoreTxt}</span>
+        <div class="history-actions">
+          <button class="secondary" data-act="open" data-id="${t.id}">Open</button>
+          <button class="ghost" data-act="download" data-id="${t.id}">Download</button>
+          <button class="ghost" data-act="delete" data-id="${t.id}" style="color:#c0392b; border-color:#c0392b;">Delete</button>
+        </div>
+      </div>
+    </li>`;
+  });
+  html += '</ul>';
+  html += '<div style="margin-top:16px;"><button class="secondary" id="historyBack">← Back to current test</button> <button class="ghost" id="historyClear" style="color:#c0392b; border-color:#c0392b;">Clear all history</button></div>';
+  main.innerHTML = html;
+
+  main.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const list = loadHistory();
+      const t = list.find(x => x.id === id);
+      if (!t) return;
+      if (btn.dataset.act === 'open') {
+        currentTest = t;
+        saveCurrent();
+        renderTest();
+        submitBtn.disabled = t.graded;
+        revealBtn.disabled = false;
+        downloadBtn.disabled = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (btn.dataset.act === 'download') {
+        downloadTest(t);
+      } else if (btn.dataset.act === 'delete') {
+        if (!confirm(`Delete test ${id}?`)) return;
+        const newList = list.filter(x => x.id !== id);
+        saveHistory(newList);
+        renderHistory();
+      }
+    });
+  });
+  document.getElementById('historyBack').addEventListener('click', renderTest);
+  document.getElementById('historyClear').addEventListener('click', () => {
+    if (!confirm('Delete ALL saved past tests? This cannot be undone.')) return;
+    saveHistory([]);
+    renderHistory();
+  });
+}
+
+newBtn.addEventListener('click', () => {
+  if (currentTest && !currentTest.graded && currentTest.answers.some(a => a != null)) {
+    if (!confirm('Start a new test? Your current unsaved answers will be lost (the test will still appear in Past Tests).')) return;
+  }
+  startNewTest();
+});
+
+submitBtn.addEventListener('click', () => {
+  if (!currentTest) { alert('Click "New Test" to start first.'); return; }
+  if (currentTest.graded) return;
+  const answered = currentTest.answers.filter(a => a != null).length;
+  if (answered < currentTest.total) {
+    if (!confirm(`You answered ${answered} of ${currentTest.total}. Grade anyway?`)) return;
+  }
+  gradeCurrent();
+});
+
+revealBtn.addEventListener('click', showAnswerKey);
+downloadBtn.addEventListener('click', () => downloadTest(currentTest));
+historyBtn.addEventListener('click', renderHistory);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = loadCurrent();
+  if (saved && saved.id) {
+    currentTest = saved;
+    renderTest();
+    submitBtn.disabled = currentTest.graded;
+    revealBtn.disabled = !currentTest.graded;
+    downloadBtn.disabled = false;
+  }
+  const history = loadHistory();
+  if (history.length) {
+    const past = history.length;
+    const extra = currentTest ? '' : ` — click Past Tests to review.`;
+    progressEl.textContent = `${past} saved test${past === 1 ? '' : 's'} in history${extra}`;
+    if (currentTest) updateProgress();
+  }
+});
+</script>
+</body>
+</html>
