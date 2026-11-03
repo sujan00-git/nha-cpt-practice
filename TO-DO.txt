@@ -119,6 +119,32 @@ WHAT CLAUDE WILL DO
   6. git commit + git push to origin/main.
 
 ==============================================================
+QUESTION COVERAGE TRACKER
+==============================================================
+
+Each PDF-based test page shows a coverage line below the toolbar:
+
+  "Progress: X of N questions seen (P%)  ·  R remaining"
+
+When all N questions have been served at least once, the line flips to
+a tinted banner:
+
+  "Completed! You've seen all N questions in this bank."
+
+Behavior:
+  - Each New Test adds its 25 picked questions to a per-page "seen"
+    tracker in localStorage (nhaCpt<Name>Seen).
+  - The picker PREFERS unseen questions, so each run makes real progress
+    toward 100%. (6 runs covers a 150-Q bank; 8 covers the 181-Q baseline.)
+  - A "Reset" link next to the coverage line clears only the seen tracker.
+    Past Tests are kept.
+
+Adding a NEW PDF-based test page: also define
+  const SEEN_KEY = 'nhaCpt<Name>Seen';
+and reuse the same hashQ / loadSeen / saveSeen / markSeen / getCoverage /
+renderCoverage / modified pickRandom code block.
+
+==============================================================
 TEST HISTORY — SAVE / RESTORE VIA GIT
 ==============================================================
 
