@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NHA CPT Final Practice Test</title>
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --primary: #4a148c;
+    --primary-dark: #38006b;
+    --accent: #1e5aa8;
+    --wrong: #c0392b;
+    --right: #1e8449;
+    --muted: #6b7280;
+    --border: #e2e6ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: #222;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 { margin: 0; font-size: 22px; }
+  header .meta { font-size: 14px; opacity: 0.92; }
+  .toolbar {
+    background: #fff;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button:hover { background: var(--primary-dark); }
+  button.secondary {
+    background: #fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+  }
+  button.secondary:hover { background: #f0eaf7; }
+  button.ghost {
+    background: #fff;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  button.ghost:hover { background: #eef3fb; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .progress {
+    margin-left: auto;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  main {
+    background: var(--card);
+    padding: 24px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    min-height: 400px;
+  }
+  .question {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .question:last-child { border-bottom: none; }
+  .q-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .q-num {
+    font-weight: 700;
+    color: var(--primary);
+    min-width: 32px;
+  }
+  .q-text { font-weight: 500; }
+  .options { margin: 10px 0 0 42px; }
+  .option {
+    display: block;
+    padding: 8px 12px;
+    margin: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .option:hover { background: #f3eef9; }
+  .option input { margin-right: 10px; }
+  .option.correct {
+    background: #e6f6ed;
+    border-color: var(--right);
+  }
+  .option.wrong {
+    background: #fbe9e7;
+    border-color: var(--wrong);
+  }
+  .option.correct-missed {
+    background: #e6f6ed;
+    border-color: var(--right);
+    border-style: dashed;
+  }
+  .result-badge {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .result-badge.right { background: var(--right); color: #fff; }
+  .result-badge.wrong { background: var(--wrong); color: #fff; }
+  .domain {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    margin-left: 42px;
+  }
+  .score-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    padding: 24px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .score-card .big {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 10px 0;
+  }
+  .score-card .pass { color: #d9b8f0; }
+  .score-card .fail { color: #ffc7c0; }
+  .domain-breakdown {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .domain-stat {
+    background: rgba(255,255,255,0.15);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .domain-stat .num { font-size: 20px; font-weight: 700; }
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 60px 20px;
+    font-size: 16px;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 20px;
+    padding: 10px;
+  }
+  .test-id {
+    font-family: monospace;
+    font-size: 12px;
+    color: #e4d7f1;
+    margin-top: 4px;
+  }
+  .history-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: #fafbfd;
+  }
+  .history-item .hi-meta { font-size: 13px; color: var(--muted); }
+  .history-item .hi-title { font-weight: 600; color: #222; }
+  .history-item .hi-score {
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    background: #e2e8f0;
+    color: #334155;
+  }
+  .history-item .hi-score.pass { background: #d9c3ec; color: #4a148c; }
+  .history-item .hi-score.fail { background: #f5cbc4; color: #8e1a1a; }
+  .history-item .hi-score.ungraded { background: #e5e7eb; color: #4b5563; }
+  .history-actions { display: flex; gap: 6px; }
+  .history-actions button { padding: 6px 10px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>NHA CPT Final Practice Test</h1>
+      <div class="meta">Questions drawn from the <code>practice-test-final</code> Focused-Review PDFs &mdash; 25 per test, random each run.</div>
+      <div style="margin-top:8px; font-size:13px;">
+        <a href="index.html" style="color:#f0e3fa; text-decoration:underline;">&larr; Back to Index</a>
+      </div>
+      <div class="test-id" id="testIdLabel"></div>
+    </div>
+  </header>
+  <div class="toolbar">
+    <button id="newBtn">New Test</button>
+    <button id="submitBtn" class="secondary">Submit &amp; Grade</button>
+    <button id="revealBtn" class="secondary" disabled>Show Answer Key</button>
+    <button id="downloadBtn" class="ghost" disabled>Download Test</button>
+    <button id="historyBtn" class="ghost">Past Tests</button>
+    <span class="progress" id="progress"></span>
+  </div>
+  <main id="main">
+    <div class="empty">Click <b>New Test</b> to begin a 25-question practice set.</div>
+  </main>
+  <footer>Study aid only &mdash; questions are representative, derived from the <code>practice-test-final</code> NHA CPT Focused-Review PDFs.</footer>
+</div>
+
+<script>
+// ============================================================
+// Final-practice question bank. Each question: { q, choices (A-D), answer, domain }
+// Domains: SC = Safety/Compliance, PP = Patient Prep,
+//          RC = Routine Collections, SP = Special Collections, PR = Processing
+// Content drawn from practice-test-final/Focused_Review (1,2,3,5).pdf
+// ============================================================
+const QUESTIONS = [
+  // ========== GLUCOSE / LACTOSE TOLERANCE TESTING (SP) ==========
+  { q:"When preparing a patient for a glucose tolerance test (GTT), they should consume how many grams of carbohydrates per day for 3 days before the test?",
+    choices:["50 g","100 g","150 g","300 g"],
+    answer:2, domain:"SP" },
+  { q:"On the day of a glucose tolerance test, the patient should fast for:",
+    choices:["Less than 2 hours","At least 4 hours but no more than 6","At least 8 hours but no more than 16","At least 24 hours"],
+    answer:2, domain:"SP" },
+  { q:"During the fasting period before a GTT, the patient should also avoid:",
+    choices:["Taking a nap","Excessive exercise, alcohol, and smoking","Reading","Watching television"],
+    answer:1, domain:"SP" },
+  { q:"During a glucose tolerance test, the patient may consume:",
+    choices:["Water only","Water and juice","Coffee without sugar","Clear broth"],
+    answer:0, domain:"SP" },
+  { q:"The typical glucose beverage amount for an adult GTT is approximately:",
+    choices:["25 g","50 g","75 g","200 g"],
+    answer:2, domain:"SP" },
+  { q:"The patient should drink the glucose beverage within:",
+    choices:["1 minute","5 minutes","15 minutes","30 minutes"],
+    answer:1, domain:"SP" },
+  { q:"The beginning time of a glucose tolerance test is recorded when:",
+    choices:["The patient arrives","The requisition is reviewed","The patient finishes the glucose beverage","The first blood is drawn"],
+    answer:2, domain:"SP" },
+  { q:"Before beginning a GTT, the FIRST blood collection is used to:",
+    choices:["Measure baseline hemoglobin","Measure baseline glucose levels to confirm results are in range before continuing","Determine the correct glucose dose","Perform a blood culture"],
+    answer:1, domain:"SP" },
+  { q:"The glucose beverage used for a gestational-diabetes GTT is typically:",
+    choices:["25 g","50 g","100 g","200 g"],
+    answer:1, domain:"SP" },
+  { q:"If the gestational-diabetes 1-hour GTT shows elevated glucose, the follow-up test is typically a:",
+    choices:["Repeat 1-hour GTT the next day","3-hour GTT","CBC","Hemoglobin A1c only"],
+    answer:1, domain:"SP" },
+  { q:"A 2-hour postprandial glucose test is performed:",
+    choices:["Immediately after the patient eats","2 hours after the patient has eaten","2 hours before the patient eats","Any time of day"],
+    answer:1, domain:"SP" },
+  { q:"Before a 2-hour postprandial glucose test, the patient should be reminded to:",
+    choices:["Avoid water","Record the exact time they finish their meal","Skip the meal","Walk vigorously"],
+    answer:1, domain:"SP" },
+  { q:"Lactose intolerance is caused by the body not producing enough of which enzyme?",
+    choices:["Amylase","Lipase","Lactase","Protease"],
+    answer:2, domain:"SP" },
+  { q:"Some providers require that which test be performed within 24 hours BEFORE a lactose tolerance test?",
+    choices:["CBC","GTT (glucose tolerance test)","Blood culture","PT/INR"],
+    answer:1, domain:"SP" },
+  { q:"Before performing a lactose tolerance test, the phlebotomist must confirm that:",
+    choices:["The patient has eaten dairy that morning","The results from the recent GTT are in the acceptable range","Blood cultures have been drawn","A lipid panel has been collected"],
+    answer:1, domain:"SP" },
+  { q:"Why is precise timing so important during glucose or lactose tolerance testing?",
+    choices:["It saves the lab money","It is required for accurate test results","It is a legal requirement for billing","It keeps the patient from leaving"],
+    answer:1, domain:"SP" },
+  { q:"During the GTT testing period, if the patient eats food, the phlebotomist should:",
+    choices:["Continue the test as normal","Shorten the next collection interval","Document and consult the provider — eating during the test can invalidate results","Give the patient more glucose solution"],
+    answer:2, domain:"SP" },
+
+  // ========== VENIPUNCTURE CLOSURE, HEMOSTASIS, BUTTERFLY (RC) ==========
+  { q:"Immediately after withdrawing the needle, the phlebotomist should:",
+    choices:["Place the needle on the tray","Engage the safety device on the needle","Recap the needle","Rinse the needle"],
+    answer:1, domain:"RC" },
+  { q:"The needle should be withdrawn from the vein:",
+    choices:["At a 90° angle","Following the angle of insertion","With a twisting motion","Slowly over 30 seconds"],
+    answer:1, domain:"RC" },
+  { q:"After withdrawing the needle, used needles should be disposed of into a:",
+    choices:["Regular trash can","Biohazard bag","Sharps container","Red bag only"],
+    answer:2, domain:"RC" },
+  { q:"After removing the needle, pressure should be applied to the venipuncture site for at least:",
+    choices:["1 to 2 seconds","5 to 10 seconds (or until bleeding stops) before bandaging","1 minute always","10 minutes always"],
+    answer:1, domain:"RC" },
+  { q:"The process of the body stopping blood flow after a venipuncture is called:",
+    choices:["Hematopoiesis","Hemostasis","Hemolysis","Hemodilution"],
+    answer:1, domain:"RC" },
+  { q:"Coagulation is best described as:",
+    choices:["The destruction of red blood cells","The process by which the body thickens blood in an area until it becomes solid (a clot)","The transportation of oxygen in blood","The dilution of plasma proteins"],
+    answer:1, domain:"RC" },
+  { q:"A butterfly (winged-infusion) needle is typically used when the patient has:",
+    choices:["Large antecubital veins","Small, difficult-to-access veins","Thick skin","High blood pressure"],
+    answer:1, domain:"RC" },
+  { q:"Compared with a routine straight-needle venipuncture, a butterfly venipuncture differs mainly in:",
+    choices:["Patient positioning","Patient identification","Needle preparation and use","Communication style"],
+    answer:2, domain:"RC" },
+  { q:"Given the tubes: Red, Green, Light blue, Lavender, Gray — the correct order of draw is:",
+    choices:["Red, Green, Light blue, Lavender, Gray","Light blue, Red, Green, Lavender, Gray","Lavender, Light blue, Red, Green, Gray","Green, Red, Light blue, Gray, Lavender"],
+    answer:1, domain:"RC" },
+  { q:"When letting the patient hold pressure on the site after a draw, the phlebotomist should still:",
+    choices:["Leave the room","Look under the gauze pad later to confirm bleeding has stopped before bandaging","Immediately bandage without checking","Give the patient a bandage to apply themselves"],
+    answer:1, domain:"RC" },
+  { q:"Collecting tubes in the wrong order can cause which problem?",
+    choices:["Patient discomfort only","Carryover of additives from one tube to the next, altering test results","Tube breakage","Loss of the vacuum in all tubes"],
+    answer:1, domain:"RC" },
+  { q:"The purpose of applying pressure to the venipuncture site after the needle is removed is to:",
+    choices:["Prevent fainting","Aid hemostasis and reduce bruising/hematoma","Warm the patient","Keep the vein from collapsing"],
+    answer:1, domain:"RC" },
+  { q:"Before beginning a butterfly venipuncture, the phlebotomist should:",
+    choices:["Only identify the patient after setup","Review the requisition and gather the same supplies as for a routine venipuncture","Skip patient identification since butterflies are quick","Use a sharps container only after multiple draws"],
+    answer:1, domain:"RC" },
+
+  // ========== CONSENT (PP) ==========
+  { q:"Performing a blood draw without first obtaining a patient’s consent could be considered:",
+    choices:["Negligence only","Battery (a legal offense)","A minor policy violation","HIPAA violation only"],
+    answer:1, domain:"PP" },
+  { q:"Informed consent requires that the patient:",
+    choices:["Signs a receipt","Is briefed in clear, understandable language about the method, risks, and outcomes","Agrees to all tests ever","Reads a textbook"],
+    answer:1, domain:"PP" },
+  { q:"Informed consent is typically documented in writing and is often required for:",
+    choices:["Vital-sign measurements","High-risk, invasive, or surgical procedures","Routine temperature checks","Simple visual inspection"],
+    answer:1, domain:"PP" },
+  { q:"Expressed consent means the patient:",
+    choices:["Says nothing but allows the procedure","Explicitly agrees verbally or in writing","Hands the phlebotomist a legal document","Signs a HIPAA notice"],
+    answer:1, domain:"PP" },
+  { q:"When expressed consent is given verbally, it should be:",
+    choices:["Ignored, since only written consent counts","Documented in the patient’s medical record along with what was discussed","Repeated to the receptionist","Printed on the tube label"],
+    answer:1, domain:"PP" },
+  { q:"The MOST common type of consent used in phlebotomy is:",
+    choices:["Informed consent","Expressed written consent","Implied consent","Court-ordered consent"],
+    answer:2, domain:"PP" },
+  { q:"A patient who willingly presents their arm for a blood draw is giving which type of consent?",
+    choices:["Written consent","Implied consent","Court consent","None"],
+    answer:1, domain:"PP" },
+  { q:"In an emergency when there is not enough time for full disclosure, which type of consent is typically used?",
+    choices:["Informed consent","Written consent","Implied consent","No consent is needed, ever"],
+    answer:2, domain:"PP" },
+  { q:"For a minor, consent for phlebotomy procedures typically must be obtained from:",
+    choices:["The minor only","A parent or legal guardian","The receptionist","The lab manager"],
+    answer:1, domain:"PP" },
+  { q:"Which of the following minors may be able to provide their OWN consent as an exception?",
+    choices:["A 10-year-old","A minor who is married, enlisted in the military, or legally emancipated","Any minor older than 12","A minor accompanied by a sibling"],
+    answer:1, domain:"PP" },
+  { q:"Performing phlebotomy on a minor without appropriate consent could make the phlebotomist liable for:",
+    choices:["A HIPAA fine only","Assault and battery","A billing violation only","Nothing — minors cannot refuse"],
+    answer:1, domain:"PP" },
+  { q:"A patient has the right to decline consent for a blood draw:",
+    choices:["Only if they can prove a medical reason","For any reason, with no obligation to justify","Only in writing","Only during business hours"],
+    answer:1, domain:"PP" },
+  { q:"When a patient refuses a blood draw, the phlebotomist should:",
+    choices:["Perform the draw anyway","Document the refusal in writing and notify the ordering provider","Argue with the patient","Reschedule without documentation"],
+    answer:1, domain:"PP" },
+  { q:"Sometimes a refusal of a blood draw stems from a lack of understanding. In such cases, the phlebotomist should:",
+    choices:["Simply walk away","Offer further explanation to address the patient’s concerns","Call hospital security","Insist on performing the draw"],
+    answer:1, domain:"PP" },
+  { q:"Documenting a patient’s refusal to consent in writing primarily:",
+    choices:["Punishes the patient","Safeguards both the patient and the provider","Satisfies the lab’s billing requirements","Is required by the FDA"],
+    answer:1, domain:"PP" },
+  { q:"Consent to a low-risk procedure such as a routine blood draw is generally established by:",
+    choices:["Informed written consent only","Implied consent (the patient’s cooperative behavior)","A court order","A notarized affidavit"],
+    answer:1, domain:"PP" },
+
+  // ========== PHOTOSENSITIVITY & CLINICAL RESEARCH (PR) ==========
+  { q:"After 1 hour of light exposure, a bilirubin specimen can lose approximately what percentage of its bilirubin?",
+    choices:["5%","10%","50%","100%"],
+    answer:2, domain:"PR" },
+  { q:"Which of the following tests is most notably impacted by light and must be protected during transport?",
+    choices:["Potassium","Bilirubin","Glucose","CBC"],
+    answer:1, domain:"PR" },
+  { q:"Acceptable ways to protect a photosensitive specimen during transport include all of the following EXCEPT:",
+    choices:["Aluminum foil","Amber tubes","Biohazard bags","A clear glass vial on the window ledge"],
+    answer:3, domain:"PR" },
+  { q:"In clinical research, the FIRST critical specimen-handling step the phlebotomist must get right is:",
+    choices:["Billing codes","Tube processing (correct order of draw, correct additive, correct volume)","Writing the lab report","Setting up the centrifuge"],
+    answer:1, domain:"PR" },
+  { q:"Improper mixing or handling of research-protocol tubes post-collection can lead to:",
+    choices:["Clearer samples","Hemolysis or clotting that compromises the sample","Faster results","Better additive performance"],
+    answer:1, domain:"PR" },
+  { q:"A research specimen bag typically has separate compartments for:",
+    choices:["Snacks and water","The specimen tubes and the associated paperwork","Two patients’ samples","Spare needles"],
+    answer:1, domain:"PR" },
+  { q:"Paperwork accompanying a research specimen typically includes patient identification, time and date of collection, and:",
+    choices:["Patient’s home address","Specific study identifiers","The phlebotomist’s salary","Insurance group number"],
+    answer:1, domain:"PR" },
+  { q:"When shipping research specimens, the document that serves as both shipping label and tracking form is the:",
+    choices:["Chain of custody","Air waybill","Requisition slip","Delivery receipt"],
+    answer:1, domain:"PR" },
+  { q:"Proper packaging of specimens for shipment includes all of the following EXCEPT:",
+    choices:["Biohazard bags","Absorbent materials","Sturdy shipping containers designed to maintain temperature","Loose paper padding only"],
+    answer:3, domain:"PR" },
+  { q:"When shipping research specimens internationally, the phlebotomist must also be familiar with:",
+    choices:["Local newspaper headlines","International shipping regulations for biological materials","The courier’s uniform code","Patient religious preferences"],
+    answer:1, domain:"PR" },
+];
+
+const TARGET_COUNT = 25;
+const HISTORY_KEY = 'nhaCptFinalHistory';
+const CURRENT_KEY = 'nhaCptFinalCurrent';
+
+const main = document.getElementById('main');
+const newBtn = document.getElementById('newBtn');
+const submitBtn = document.getElementById('submitBtn');
+const revealBtn = document.getElementById('revealBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const historyBtn = document.getElementById('historyBtn');
+const progressEl = document.getElementById('progress');
+const testIdLabel = document.getElementById('testIdLabel');
+
+let currentTest = null;
+
+function uuid() {
+  const d = new Date();
+  const pad = (n, l=2) => String(n).padStart(l, '0');
+  return `F${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}-${Math.random().toString(36).slice(2,6)}`;
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRandom(n) {
+  // If bank is smaller than requested, use the whole bank
+  const take = Math.min(n, QUESTIONS.length);
+  return shuffle(QUESTIONS).slice(0, take);
+}
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveHistory(list) {
+  const capped = list.slice(0, 50);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(capped));
+}
+function upsertHistory(test) {
+  const list = loadHistory();
+  const idx = list.findIndex(t => t.id === test.id);
+  if (idx >= 0) list[idx] = test;
+  else list.unshift(test);
+  saveHistory(list);
+}
+function saveCurrent() {
+  if (currentTest) localStorage.setItem(CURRENT_KEY, JSON.stringify(currentTest));
+}
+function loadCurrent() {
+  try { return JSON.parse(localStorage.getItem(CURRENT_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function domainName(code) {
+  return {
+    SC: "Safety & Compliance",
+    PP: "Patient Prep",
+    RC: "Routine Collections",
+    SP: "Special Collections",
+    PR: "Processing"
+  }[code] || code;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderTest(readOnly=false) {
+  if (!currentTest) {
+    main.innerHTML = '<div class="empty">Click <b>New Test</b> to begin a 25-question practice set.</div>';
+    testIdLabel.textContent = '';
+    return;
+  }
+  const scoreHtml = currentTest.graded ? renderScoreCard(currentTest) : '';
+  let html = scoreHtml;
+  currentTest.questions.forEach((item, idx) => {
+    const userAns = currentTest.answers[idx];
+    html += `<div class="question" data-idx="${idx}">
+      <div class="q-header">
+        <div class="q-num">${idx + 1}.</div>
+        <div class="q-text">${escapeHtml(item.q)}</div>
+      </div>
+      <div class="options">
+        ${item.choices.map((c, i) => {
+          const checked = userAns === i ? 'checked' : '';
+          const disabled = (readOnly || currentTest.graded) ? 'disabled' : '';
+          let cls = 'option';
+          if (currentTest.graded) {
+            if (i === item.answer && i === userAns) cls += ' correct';
+            else if (i === item.answer) cls += ' correct-missed';
+            else if (i === userAns) cls += ' wrong';
+          }
+          return `<label class="${cls}" data-choice="${i}">
+            <input type="radio" name="q${idx}" value="${i}" ${checked} ${disabled}>
+            <b>${String.fromCharCode(65 + i)}.</b> ${escapeHtml(c)}
+          </label>`;
+        }).join('')}
+      </div>
+      <div class="domain">Domain: ${domainName(item.domain)}${
+        currentTest.graded
+          ? ` &middot; ${userAns === item.answer ? '<span style="color:#1e8449;font-weight:700;">Correct</span>' : (userAns == null ? '<span style="color:#6b7280;font-weight:700;">Skipped</span>' : '<span style="color:#c0392b;font-weight:700;">Incorrect</span>')}`
+          : ''
+      }</div>
+    </div>`;
+  });
+  main.innerHTML = html;
+  updateProgress();
+  main.querySelectorAll('input[type="radio"]').forEach(r => {
+    r.addEventListener('change', (e) => {
+      const name = e.target.name;
+      const idx = parseInt(name.slice(1), 10);
+      currentTest.answers[idx] = parseInt(e.target.value, 10);
+      saveCurrent();
+      updateProgress();
+    });
+  });
+  testIdLabel.textContent = `Test ID: ${currentTest.id} • ${new Date(currentTest.timestamp).toLocaleString()}`;
+}
+
+function renderScoreCard(t) {
+  const domainStats = {};
+  t.questions.forEach((item, idx) => {
+    if (!domainStats[item.domain]) domainStats[item.domain] = { right: 0, total: 0 };
+    domainStats[item.domain].total++;
+    if (t.answers[idx] === item.answer) domainStats[item.domain].right++;
+  });
+  const pass = t.pct >= 75;
+  return `
+    <div class="score-card">
+      <div style="font-size:14px; opacity:0.85;">YOUR SCORE</div>
+      <div class="big ${pass ? 'pass' : 'fail'}">${t.score} / ${t.total} &nbsp; (${t.pct}%)</div>
+      <div>${pass ? 'Pass — keep practicing!' : 'Below 75% — review the missed items.'}</div>
+      <div class="domain-breakdown">
+        ${Object.entries(domainStats).map(([d, s]) => `
+          <div class="domain-stat">
+            <div>${domainName(d)}</div>
+            <div class="num">${s.right}/${s.total}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function updateProgress() {
+  if (!currentTest) { progressEl.textContent = ''; return; }
+  const answered = currentTest.answers.filter(a => a != null).length;
+  if (currentTest.graded) {
+    progressEl.textContent = `Graded: ${currentTest.score}/${currentTest.total} (${currentTest.pct}%)`;
+  } else {
+    progressEl.textContent = `Answered ${answered} / ${currentTest.total}`;
+  }
+}
+
+function startNewTest() {
+  const picked = pickRandom(TARGET_COUNT);
+  currentTest = {
+    id: uuid(),
+    timestamp: Date.now(),
+    questions: picked,
+    answers: picked.map(() => null),
+    graded: false,
+    score: 0,
+    total: picked.length,
+    pct: 0
+  };
+  saveCurrent();
+  upsertHistory(currentTest);
+  renderTest();
+  revealBtn.disabled = true;
+  submitBtn.disabled = false;
+  downloadBtn.disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function gradeCurrent() {
+  if (!currentTest) return;
+  let correct = 0;
+  currentTest.questions.forEach((item, idx) => {
+    if (currentTest.answers[idx] === item.answer) correct++;
+  });
+  currentTest.score = correct;
+  currentTest.pct = Math.round((correct / currentTest.total) * 100);
+  currentTest.graded = true;
+  saveCurrent();
+  upsertHistory(currentTest);
+  renderTest();
+  submitBtn.disabled = true;
+  revealBtn.disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showAnswerKey() {
+  if (!currentTest) return;
+  let html = '<div class="score-card"><div style="font-size:18px; font-weight:700;">Answer Key</div></div>';
+  html += '<ol style="line-height:1.8;">';
+  currentTest.questions.forEach(item => {
+    const letter = String.fromCharCode(65 + item.answer);
+    html += `<li style="margin-bottom:10px;"><b>${escapeHtml(item.q)}</b><br>
+      <span style="color:#1e8449;"><b>Answer: ${letter}.</b> ${escapeHtml(item.choices[item.answer])}</span>
+      <div class="domain" style="margin-left:0;">Domain: ${domainName(item.domain)}</div></li>`;
+  });
+  html += '</ol>';
+  html += '<button class="secondary" onclick="renderTest()">← Back to test view</button>';
+  main.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function downloadTest(test) {
+  if (!test) return;
+  const ts = new Date(test.timestamp);
+  const header = `NHA CPT Final Practice Test\nTest ID: ${test.id}\nStarted: ${ts.toLocaleString()}\nStatus: ${test.graded ? `Graded ${test.score}/${test.total} (${test.pct}%)` : 'Not graded'}\n\n`;
+  const body = test.questions.map((item, idx) => {
+    const letters = ['A','B','C','D','E','F'];
+    const choices = item.choices.map((c, i) => `  ${letters[i]}. ${c}`).join('\n');
+    const yourAns = test.answers[idx] != null ? letters[test.answers[idx]] : '(skipped)';
+    const correctAns = letters[item.answer];
+    const mark = test.graded ? (test.answers[idx] === item.answer ? '[Correct]' : '[Incorrect]') : '';
+    return `Q${idx+1} [${domainName(item.domain)}] ${mark}\n${item.q}\n${choices}\nYour answer: ${yourAns}\nCorrect answer: ${correctAns}. ${item.choices[item.answer]}\n`;
+  }).join('\n');
+  const blob = new Blob([header + body], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${test.id}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function renderHistory() {
+  const list = loadHistory();
+  if (!list.length) {
+    main.innerHTML = `<h2 style="margin-top:0;">Past Tests</h2>
+      <div class="empty">No past tests yet. Click <b>New Test</b> to begin.</div>
+      <button class="secondary" onclick="renderTest()">← Back</button>`;
+    return;
+  }
+  let html = `<h2 style="margin-top:0;">Past Tests <span style="font-size:13px; color:#6b7280; font-weight:400;">(${list.length} saved)</span></h2>`;
+  html += '<ul class="history-list">';
+  list.forEach(t => {
+    const ts = new Date(t.timestamp);
+    let scoreCls = 'ungraded';
+    let scoreTxt = 'Not graded';
+    if (t.graded) {
+      scoreCls = t.pct >= 75 ? 'pass' : 'fail';
+      scoreTxt = `${t.score}/${t.total} (${t.pct}%)`;
+    }
+    html += `<li class="history-item">
+      <div>
+        <div class="hi-title">${escapeHtml(t.id)}</div>
+        <div class="hi-meta">${ts.toLocaleString()} &middot; ${t.total} questions</div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <span class="hi-score ${scoreCls}">${scoreTxt}</span>
+        <div class="history-actions">
+          <button class="secondary" data-act="open" data-id="${t.id}">Open</button>
+          <button class="ghost" data-act="download" data-id="${t.id}">Download</button>
+          <button class="ghost" data-act="delete" data-id="${t.id}" style="color:#c0392b; border-color:#c0392b;">Delete</button>
+        </div>
+      </div>
+    </li>`;
+  });
+  html += '</ul>';
+  html += '<div style="margin-top:16px;"><button class="secondary" id="historyBack">← Back to current test</button> <button class="ghost" id="historyClear" style="color:#c0392b; border-color:#c0392b;">Clear all history</button></div>';
+  main.innerHTML = html;
+
+  main.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const list = loadHistory();
+      const t = list.find(x => x.id === id);
+      if (!t) return;
+      if (btn.dataset.act === 'open') {
+        currentTest = t;
+        saveCurrent();
+        renderTest();
+        submitBtn.disabled = t.graded;
+        revealBtn.disabled = false;
+        downloadBtn.disabled = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (btn.dataset.act === 'download') {
+        downloadTest(t);
+      } else if (btn.dataset.act === 'delete') {
+        if (!confirm(`Delete test ${id}?`)) return;
+        const newList = list.filter(x => x.id !== id);
+        saveHistory(newList);
+        renderHistory();
+      }
+    });
+  });
+  document.getElementById('historyBack').addEventListener('click', renderTest);
+  document.getElementById('historyClear').addEventListener('click', () => {
+    if (!confirm('Delete ALL saved past tests? This cannot be undone.')) return;
+    saveHistory([]);
+    renderHistory();
+  });
+}
+
+newBtn.addEventListener('click', () => {
+  if (currentTest && !currentTest.graded && currentTest.answers.some(a => a != null)) {
+    if (!confirm('Start a new test? Your current unsaved answers will be lost (the test will still appear in Past Tests).')) return;
+  }
+  startNewTest();
+});
+
+submitBtn.addEventListener('click', () => {
+  if (!currentTest) { alert('Click "New Test" to start first.'); return; }
+  if (currentTest.graded) return;
+  const answered = currentTest.answers.filter(a => a != null).length;
+  if (answered < currentTest.total) {
+    if (!confirm(`You answered ${answered} of ${currentTest.total}. Grade anyway?`)) return;
+  }
+  gradeCurrent();
+});
+
+revealBtn.addEventListener('click', showAnswerKey);
+downloadBtn.addEventListener('click', () => downloadTest(currentTest));
+historyBtn.addEventListener('click', renderHistory);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = loadCurrent();
+  if (saved && saved.id) {
+    currentTest = saved;
+    renderTest();
+    submitBtn.disabled = currentTest.graded;
+    revealBtn.disabled = !currentTest.graded;
+    downloadBtn.disabled = false;
+  }
+  const history = loadHistory();
+  if (history.length) {
+    const past = history.length;
+    const extra = currentTest ? '' : ` — click Past Tests to review.`;
+    progressEl.textContent = `${past} saved test${past === 1 ? '' : 's'} in history${extra}`;
+    if (currentTest) updateProgress();
+  }
+});
+</script>
+</body>
+</html>
