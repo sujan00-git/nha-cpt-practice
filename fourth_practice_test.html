@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>NHA CPT 4th Practice Test</title>
+<style>
+  :root {
+    --bg: #f4f6fa;
+    --card: #ffffff;
+    --primary: #d84315;
+    --primary-dark: #a1300d;
+    --accent: #1e5aa8;
+    --wrong: #c0392b;
+    --right: #1e8449;
+    --muted: #6b7280;
+    --border: #e2e6ee;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: #222;
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 { margin: 0; font-size: 22px; }
+  header .meta { font-size: 14px; opacity: 0.92; }
+  .toolbar {
+    background: #fff;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  button {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  button:hover { background: var(--primary-dark); }
+  button.secondary {
+    background: #fff;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+  }
+  button.secondary:hover { background: #fdece6; }
+  button.ghost {
+    background: #fff;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  button.ghost:hover { background: #eef3fb; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .progress { margin-left: auto; font-size: 14px; color: var(--muted); }
+  main {
+    background: var(--card);
+    padding: 24px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    min-height: 400px;
+  }
+  .question {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .question:last-child { border-bottom: none; }
+  .q-header { display: flex; gap: 10px; margin-bottom: 10px; }
+  .q-num { font-weight: 700; color: var(--primary); min-width: 32px; }
+  .q-text { font-weight: 500; }
+  .options { margin: 10px 0 0 42px; }
+  .option {
+    display: block;
+    padding: 8px 12px;
+    margin: 6px 0;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+  .option:hover { background: #fdf0ea; }
+  .option input { margin-right: 10px; }
+  .option.correct { background: #e6f6ed; border-color: var(--right); }
+  .option.wrong { background: #fbe9e7; border-color: var(--wrong); }
+  .option.correct-missed { background: #e6f6ed; border-color: var(--right); border-style: dashed; }
+  .result-badge {
+    display: inline-block; margin-left: 10px; padding: 2px 10px;
+    border-radius: 12px; font-size: 12px; font-weight: 700;
+  }
+  .result-badge.right { background: var(--right); color: #fff; }
+  .result-badge.wrong { background: var(--wrong); color: #fff; }
+  .domain {
+    font-size: 11px; text-transform: uppercase; color: var(--muted);
+    letter-spacing: 0.5px; margin-top: 4px; margin-left: 42px;
+  }
+  .score-card {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white; padding: 24px; border-radius: 10px; margin-bottom: 20px; text-align: center;
+  }
+  .score-card .big { font-size: 48px; font-weight: 700; margin: 10px 0; }
+  .score-card .pass { color: #ffd4b8; }
+  .score-card .fail { color: #ffc7c0; }
+  .domain-breakdown {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px; margin-top: 16px;
+  }
+  .domain-stat {
+    background: rgba(255,255,255,0.15); padding: 10px; border-radius: 6px; font-size: 13px;
+  }
+  .domain-stat .num { font-size: 20px; font-weight: 700; }
+  .empty { text-align: center; color: var(--muted); padding: 60px 20px; font-size: 16px; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 20px; padding: 10px; }
+  .test-id { font-family: monospace; font-size: 12px; color: #ffddcc; margin-top: 4px; }
+  .history-list { list-style: none; padding: 0; margin: 0; }
+  .history-item {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; padding: 12px 14px; border: 1px solid var(--border);
+    border-radius: 8px; margin-bottom: 8px; background: #fafbfd;
+  }
+  .history-item .hi-meta { font-size: 13px; color: var(--muted); }
+  .history-item .hi-title { font-weight: 600; color: #222; }
+  .history-item .hi-score {
+    font-weight: 700; padding: 4px 10px; border-radius: 10px;
+    font-size: 13px; background: #e2e8f0; color: #334155;
+  }
+  .history-item .hi-score.pass { background: #ffd9c2; color: #a1300d; }
+  .history-item .hi-score.fail { background: #f5cbc4; color: #8e1a1a; }
+  .history-item .hi-score.ungraded { background: #e5e7eb; color: #4b5563; }
+  .history-actions { display: flex; gap: 6px; }
+  .history-actions button { padding: 6px 10px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>NHA CPT 4th Practice Test</h1>
+      <div class="meta">Questions drawn from the <code>practice-test-4th</code> Focused-Review PDFs &mdash; 25 per test, random each run.</div>
+      <div style="margin-top:8px; font-size:13px;">
+        <a href="index.html" style="color:#ffeadd; text-decoration:underline;">&larr; Back to Index</a>
+      </div>
+      <div class="test-id" id="testIdLabel"></div>
+    </div>
+  </header>
+  <div class="toolbar">
+    <button id="newBtn">New Test</button>
+    <button id="submitBtn" class="secondary">Submit &amp; Grade</button>
+    <button id="revealBtn" class="secondary" disabled>Show Answer Key</button>
+    <button id="downloadBtn" class="ghost" disabled>Download Test</button>
+    <button id="historyBtn" class="ghost">Past Tests</button>
+    <span class="progress" id="progress"></span>
+  </div>
+  <main id="main">
+    <div class="empty">Click <b>New Test</b> to begin a 25-question practice set.</div>
+  </main>
+  <footer>Study aid only &mdash; questions are representative, derived from the <code>practice-test-4th</code> NHA CPT Focused-Review PDFs.</footer>
+</div>
+
+<script>
+// ============================================================
+// 4th-practice question bank. Each question: { q, choices (A-D), answer, domain }
+// Domains: SC = Safety/Compliance, PP = Patient Prep,
+//          RC = Routine Collections, SP = Special Collections, PR = Processing
+// Content drawn from practice-test-4th/Focused_Review (1..11).pdf
+// ============================================================
+const QUESTIONS = [
+  // ========== SAFETY & COMPLIANCE (SC) ==========
+  // POCT and CLIA
+  { q:"Point-of-care testing (POCT) is best defined as:",
+    choices:["Testing performed in a reference lab across town","Clinical laboratory testing performed close to where the patient is receiving care","Billing and coding of lab charges","Testing that requires an associate's degree to run"],
+    answer:1, domain:"SC" },
+  { q:"POCT devices rely on which of the following to make sure results match what a full lab would produce?",
+    choices:["Quality controls (QCs) run per the manufacturer's directions","Patient confirmation of results","A sign-off from a physician before every test","A yearly inspection only"],
+    answer:0, domain:"SC" },
+  { q:"The three testing-complexity categories under the Clinical Laboratory Improvement Amendments of 1988 (CLIA '88) are:",
+    choices:["Low, medium, and high","Waived, moderate complexity, and high complexity","Screening, confirming, and reporting","Routine, special, and research"],
+    answer:1, domain:"SC" },
+  { q:"CLIA testing complexity is determined by:",
+    choices:["Who ordered the test","The difficulty of performing the test and the degree of harm to a patient if performed incorrectly","Where the lab is located","How much the test costs"],
+    answer:1, domain:"SC" },
+  { q:"The most common CLIA-waived test a phlebotomist performs is a:",
+    choices:["Lipid panel","Blood glucose level (using a portable glucometer)","Blood culture","Complete blood count"],
+    answer:1, domain:"SC" },
+  { q:"A laboratory that performs ONLY CLIA-waived tests requires:",
+    choices:["No certificate at all","A Certificate of Waiver","A Certificate of Compliance","A Certificate of Accreditation only"],
+    answer:1, domain:"SC" },
+  { q:"Phlebotomists are generally NOT able to run which type of testing?",
+    choices:["Waived tests","Moderate-complexity tests","High-complexity testing (reserved for medical lab technicians/technologists with proper training)","Any laboratory test at all"],
+    answer:2, domain:"SC" },
+  // Quality control
+  { q:"Quality control (QC) is best described as:",
+    choices:["The system of training new employees","The process used to ensure the accuracy and reliability of results","A review of financial performance","The scheduling of patient appointments"],
+    answer:1, domain:"SC" },
+  { q:"QC on a glucometer is typically performed using:",
+    choices:["A patient's blood sample","Two of the liquid controls provided by the manufacturer, compared against target ranges","Any clean fluid","Water only"],
+    answer:1, domain:"SC" },
+  { q:"After running QCs on a glucometer, the results must be:",
+    choices:["Memorized only","Documented in the logbook","Reported to the patient","Faxed to the FDA"],
+    answer:1, domain:"SC" },
+  { q:"If QC results on a glucometer are out of range, the phlebotomist should FIRST:",
+    choices:["Use the device anyway on the next patient","Recheck the QCs; if still inaccurate, try new QC reagents","Discard the glucometer","Call the patient's provider"],
+    answer:1, domain:"SC" },
+  { q:"If a glucometer continues to fail QCs even with new reagents, the phlebotomist should:",
+    choices:["Use it anyway","Not use it for patient testing and contact the manufacturer","Clean the sensor and keep testing","Lower the result manually"],
+    answer:1, domain:"SC" },
+  { q:"Quality control (QC) and quality assurance (QA) differ in that QA:",
+    choices:["Is the same as QC","Is a process designed to prevent future problems by analyzing past and present performance; QC is a factor within QA","Is only performed yearly","Does not apply to phlebotomy"],
+    answer:1, domain:"SC" },
+  { q:"QC logs can be reviewed by agencies such as TJC and CLSI to confirm:",
+    choices:["Billing accuracy","That QCs are being done and that routine maintenance and calibration are occurring","Employee performance evaluations","Patient satisfaction scores"],
+    answer:1, domain:"SC" },
+  { q:"The committee formed to assist in administering CLIA regulations and advise on revisions is the:",
+    choices:["Clinical Laboratory Improvement Advisory Committee (CLIAC)","Joint Commission Review Panel","OSHA Advisory Board","FDA Lab Oversight Committee"],
+    answer:0, domain:"SC" },
+  // Operational standards
+  { q:"Which organizations create and enforce operational standards for phlebotomy?",
+    choices:["OSHA, FDA, and NIH","The Joint Commission (TJC), CLSI, and the CDC","CMS and HHS only","AMA and AHA"],
+    answer:1, domain:"SC" },
+  { q:"The primary mission of The Joint Commission (TJC) is to:",
+    choices:["Collect taxes","Ensure safety in health care","License physicians","Audit insurance claims"],
+    answer:1, domain:"SC" },
+  { q:"At minimum, a patient must be identified by:",
+    choices:["One identifier","Two patient identifiers (e.g., first/last name and date of birth)","Three identifiers","Any available information"],
+    answer:1, domain:"SC" },
+  { q:"If an incorrect tube color is collected, the sample is often:",
+    choices:["Accepted and tested anyway","Required to be recollected because of the preservative's impact on the blood","Diluted and run","Centrifuged twice to compensate"],
+    answer:1, domain:"SC" },
+  // HIPAA / PHI
+  { q:"HIPAA stands for the:",
+    choices:["Health Information Privacy and Access Act","Health Insurance Portability and Accountability Act","Hospital Information Protection Act","Health Industry Patient Advocacy Act"],
+    answer:1, domain:"SC" },
+  { q:"The primary purpose of HIPAA is to:",
+    choices:["Standardize billing codes","Protect the personal health information (PHI) of patients","Set OSHA safety standards","Regulate medical devices"],
+    answer:1, domain:"SC" },
+  { q:"Which of the following would be considered PHI?",
+    choices:["The hospital's address","Office visit notes, lab results, treatments, or diagnoses tied to an identifiable patient","A journal article about a disease","Lab equipment serial numbers"],
+    answer:1, domain:"SC" },
+  { q:"Under HIPAA, PHI can generally be shared without written patient consent for:",
+    choices:["Casual conversation with coworkers","Treatment, payment, or health care operations","Media interviews","Marketing to new patients"],
+    answer:1, domain:"SC" },
+  { q:"Discussing patient PHI with another member of the care team:",
+    choices:["Is never allowed","Should be done in a private area, not in elevators, hallways, or eating areas","Must be documented verbatim in the chart","Can only be done over text message"],
+    answer:1, domain:"SC" },
+  { q:"Knowingly sharing a patient's PHI (without authorization) can lead to penalties up to:",
+    choices:["$1,000 and 30 days","$10,000 and 90 days","$1,806,757 in fines and 1 year in prison","A verbal warning only"],
+    answer:2, domain:"SC" },
+  { q:"Selling or planning to sell a patient's PHI can lead to penalties up to:",
+    choices:["$1,000 and 30 days","$1,806,757 in fines and 10 years in prison","A verbal warning only","Loss of parking privileges"],
+    answer:1, domain:"SC" },
+  // Scope of practice
+  { q:"When a phlebotomist performs a task outside their scope of practice, they can expose themselves and the patient to:",
+    choices:["Nothing — it is encouraged","Legal and ethical risks and significant harm to the patient","Only minor billing issues","Only a verbal warning"],
+    answer:1, domain:"SC" },
+  { q:"Aseptic technique is defined as:",
+    choices:["Cleaning only after a procedure","A practice used to reduce the chance of microbial contamination","Reusing supplies safely","Sterilizing the patient's skin with heat"],
+    answer:1, domain:"SC" },
+
+  // ========== PATIENT PREPARATION (PP) — Consent ==========
+  { q:"Performing a blood draw without first securing the patient's consent could be considered:",
+    choices:["Negligence only","Battery (a legal offense)","A minor policy violation","Simply bad manners"],
+    answer:1, domain:"PP" },
+  { q:"Informed consent requires that the patient:",
+    choices:["Sign a receipt","Be briefed in clear, understandable language on the method, risks, and outcomes","Agree to all future tests","Read a medical textbook"],
+    answer:1, domain:"PP" },
+  { q:"Informed consent is typically documented in writing and is often required for:",
+    choices:["Vital signs only","High-risk, invasive, or surgical procedures","Simple visual inspection","Routine temperature checks"],
+    answer:1, domain:"PP" },
+  { q:"Expressed consent is defined as:",
+    choices:["Consent given silently through body language","The patient explicitly agreeing to the procedure, either verbally or in writing","Consent inferred from the chart only","A phone call from a family member"],
+    answer:1, domain:"PP" },
+  { q:"Verbal expressed consent should be:",
+    choices:["Ignored, since only written counts","Documented in the patient's medical record along with what was discussed","Printed on the tube","Repeated to the receptionist"],
+    answer:1, domain:"PP" },
+  { q:"The most common type of consent used in phlebotomy is:",
+    choices:["Informed consent","Expressed written consent","Implied consent","Court-ordered consent"],
+    answer:2, domain:"PP" },
+  { q:"A patient who willingly presents their arm for a blood draw is giving:",
+    choices:["Written consent","Implied consent","Court-ordered consent","No consent"],
+    answer:1, domain:"PP" },
+  { q:"In emergencies when there isn't enough time for full disclosure, the type of consent typically used is:",
+    choices:["Informed consent","Written consent","Implied consent","No consent is required ever"],
+    answer:2, domain:"PP" },
+  { q:"Consent for phlebotomy on a minor usually must be obtained from:",
+    choices:["The minor only","A parent or legal guardian","The receptionist","The lab manager"],
+    answer:1, domain:"PP" },
+  { q:"Which minor exception may allow a minor to provide their OWN consent?",
+    choices:["Any teenager over 13","A minor who is married, enlisted in the military, or legally emancipated","Any minor with a job","A minor accompanied by a sibling"],
+    answer:1, domain:"PP" },
+  { q:"A patient has the right to decline consent for a blood draw:",
+    choices:["Only with a medical reason","For any reason, with no obligation to justify","Only in writing","Only on weekends"],
+    answer:1, domain:"PP" },
+  { q:"When a patient refuses a blood draw, the phlebotomist should:",
+    choices:["Perform the draw anyway","Document the refusal in writing and notify the ordering provider","Argue with the patient","Leave with no documentation"],
+    answer:1, domain:"PP" },
+  { q:"Documenting a patient's refusal to consent primarily:",
+    choices:["Punishes the patient","Safeguards both the patient and the provider","Satisfies billing","Is only required by state law"],
+    answer:1, domain:"PP" },
+
+  // ========== ROUTINE COLLECTIONS (RC) ==========
+  // Venipuncture steps / inversions / order of draw
+  { q:"When inserting the venipuncture needle, the bevel should be:",
+    choices:["Facing down","Facing up","Facing sideways","Any direction works"],
+    answer:1, domain:"RC" },
+  { q:"The 'lumen' of a vein refers to:",
+    choices:["The outer wall","The middle (inside) of the vein — the target for venipuncture","A branch of the vein","The valve pocket"],
+    answer:1, domain:"RC" },
+  { q:"To anchor the vein, use the thumb of the nondominant hand placed:",
+    choices:["Directly over the puncture site","1 to 2 inches BELOW the venipuncture site","3 to 4 inches above the site","On the wrist"],
+    answer:1, domain:"RC" },
+  { q:"After blood flow has been established in the first tube, you should:",
+    choices:["Keep the tourniquet on for the whole draw","Release the tourniquet and ask the patient to relax and open their fist","Pull the needle out immediately","Reposition the needle deeper"],
+    answer:1, domain:"RC" },
+  { q:"Each tube with an additive should be:",
+    choices:["Shaken vigorously","Gently inverted the manufacturer's recommended number of times","Centrifuged immediately","Placed on ice"],
+    answer:1, domain:"RC" },
+  { q:"Venous blood is normally:",
+    choices:["Bright cherry red","Dark red to reddish-brown","Clear","Pink"],
+    answer:1, domain:"RC" },
+  { q:"If the blood flowing into the tube is bright cherry red, the phlebotomist should:",
+    choices:["Finish the draw quickly","Stop the collection immediately and apply pressure to the site — suspect an arterial puncture","Switch to a larger needle","Continue if the patient feels fine"],
+    answer:1, domain:"RC" },
+  { q:"Why must each vacuum tube be filled completely?",
+    choices:["To make the lab happy","Because the additive and testing methods require the proper fill for accurate results","To use up vacuum","So the label fits better"],
+    answer:1, domain:"RC" },
+  { q:"Which tube in particular is often REJECTED if not filled completely?",
+    choices:["Red","Lavender","Light blue (coagulation)","Green"],
+    answer:2, domain:"RC" },
+  { q:"Given the tubes Red, Green, Light blue, Lavender, Gray — the correct order of draw is:",
+    choices:["Red, Green, Light blue, Lavender, Gray","Light blue, Red, Green, Lavender, Gray","Lavender, Light blue, Red, Green, Gray","Green, Red, Light blue, Gray, Lavender"],
+    answer:1, domain:"RC" },
+  // Hemostasis / closure
+  { q:"The process by which the body stops blood flow after a venipuncture is called:",
+    choices:["Hematopoiesis","Hemostasis","Hemolysis","Hemodilution"],
+    answer:1, domain:"RC" },
+  { q:"Coagulation is best described as:",
+    choices:["Destruction of red blood cells","The process by which the body thickens blood in an area until it becomes a solid clot","The transportation of oxygen in blood","Dilution of plasma proteins"],
+    answer:1, domain:"RC" },
+  { q:"Immediately after withdrawing the needle, the phlebotomist should:",
+    choices:["Recap the needle","Engage the safety device on the needle","Lay the needle on the tray","Rinse the needle"],
+    answer:1, domain:"RC" },
+  { q:"The needle should be withdrawn from the vein:",
+    choices:["At a 90° angle","Following the angle of insertion","With a twisting motion","Slowly over 30 seconds"],
+    answer:1, domain:"RC" },
+  { q:"After removing the needle, pressure should be applied to the site for at least:",
+    choices:["1 to 2 seconds","5 to 10 seconds (or until bleeding stops) before bandaging","1 minute always","10 minutes always"],
+    answer:1, domain:"RC" },
+  { q:"Used needles should be disposed of into a:",
+    choices:["Regular trash can","Red biohazard bag","Sharps container","Plastic shopping bag"],
+    answer:2, domain:"RC" },
+  { q:"A butterfly (winged-infusion) needle is primarily used for:",
+    choices:["Large, easy antecubital veins","Small, difficult-to-access veins","Only blood cultures","Arterial draws"],
+    answer:1, domain:"RC" },
+  // Tubes / expiration
+  { q:"Expired vacuum tubes should not be used because:",
+    choices:["The vacuum is reduced and the additive quality may be degraded","They cost more","The label will not stick","They are a choking hazard"],
+    answer:0, domain:"RC" },
+  { q:"If a test requires 11 mL of blood and your available tubes hold only 6 mL each, you should:",
+    choices:["Overfill one tube","Use two tubes for that collection","Dilute the sample","Collect only 6 mL and note the shortage"],
+    answer:1, domain:"RC" },
+  // Site selection
+  { q:"The FIRST choice for routine venipuncture is a vein in the:",
+    choices:["Dorsal part of the hand","Antecubital region of the arm","Foot","Inside of the wrist"],
+    answer:1, domain:"RC" },
+  { q:"The first-choice vein in the antecubital region is the:",
+    choices:["Cephalic","Basilic","Median cubital","Radial"],
+    answer:2, domain:"RC" },
+  { q:"The second-choice vein in the antecubital region is the:",
+    choices:["Basilic","Cephalic","Brachial","Median nerve"],
+    answer:1, domain:"RC" },
+  { q:"The basilic vein is the LAST choice because it:",
+    choices:["Is only present in some patients","Lies close to the median nerve and brachial artery and rolls more easily","Is in the hand","Is too small to find"],
+    answer:1, domain:"RC" },
+  { q:"If no suitable antecubital vein is available, the NEXT best site is typically the:",
+    choices:["Inside of the wrist","Dorsal part of the hand","Foot","Thigh"],
+    answer:1, domain:"RC" },
+  { q:"Which site should NEVER be used for venipuncture due to risk of injuring a nerve or tendon, no matter how visible the veins look?",
+    choices:["Dorsal part of the hand","Antecubital region","Inside of the wrist","Cephalic vein"],
+    answer:2, domain:"RC" },
+  { q:"Leg or ankle venipunctures require:",
+    choices:["No special permission","Permission from the ordering personnel or the patient's provider","A patient waiver only","Approval from the receptionist"],
+    answer:1, domain:"RC" },
+  { q:"Leg or ankle venipunctures should NOT be performed on patients who:",
+    choices:["Are over age 50","Have been diagnosed with diabetes mellitus","Are fasting","Prefer their right side"],
+    answer:1, domain:"RC" },
+  { q:"To expose the dorsal-hand veins for venipuncture, ask the patient to:",
+    choices:["Make a fist with their palm up","Extend their hand, palm down","Elevate the arm above their head","Rotate the wrist repeatedly"],
+    answer:1, domain:"RC" },
+  // Site-selection scenarios
+  { q:"A patient has a burn covering most of their LEFT arm and hand. Their RIGHT cephalic and median cubital are not visible or palpable, and the right basilic is visible but not palpable. The BEST venipuncture site is the:",
+    choices:["Left median cubital","Left cephalic","Right basilic","Dorsal side of the right hand"],
+    answer:3, domain:"RC" },
+  { q:"A patient has a CVAD in the upper RIGHT forearm and some distal tortuous veins on the LEFT. On the LEFT, the median cubital and cephalic are both visible and palpable. The BEST site is the:",
+    choices:["Right basilic (avoiding the CVAD site)","Left median cubital","Left basilic","Right hand"],
+    answer:1, domain:"RC" },
+  { q:"A patient has a cast on the RIGHT arm. On the LEFT, both the cephalic and basilic are visible and palpable. The BEST site is the:",
+    choices:["Left basilic","Right hand","Left cephalic","Right cephalic"],
+    answer:2, domain:"RC" },
+
+  // ========== SPECIAL COLLECTIONS (SP) — Nonblood swabs ==========
+  { q:"Throat cultures are typically ordered to:",
+    choices:["Measure glucose","Confirm and identify a patient's illness by sampling throat secretions","Check clotting times","Screen for diabetes"],
+    answer:1, domain:"SP" },
+  { q:"When performing a throat culture, the swab should sample:",
+    choices:["Only the tongue","The entire surface of the throat, including the tonsils and any red areas","The cheek lining","The lips"],
+    answer:1, domain:"SP" },
+  { q:"After collecting a throat swab, the next step is to:",
+    choices:["Air-dry the swab","Place the swab into the transport medium and seal/label the container","Rinse the swab in saline","Freeze the sample"],
+    answer:1, domain:"SP" },
+  { q:"For a nasal swab, the swab must be inserted at least how far into the nostril?",
+    choices:["0.1 cm","1.27 cm (0.5 in)","5 cm","10 cm"],
+    answer:1, domain:"SP" },
+  { q:"When performing a nasal swab, how long should the swab be rolled inside each nostril?",
+    choices:["2 seconds","15 seconds","1 minute","5 minutes"],
+    answer:1, domain:"SP" },
+  { q:"A nasal swab should be collected from:",
+    choices:["Only one nostril","Both nostrils","The mouth and one nostril","The pharynx"],
+    answer:1, domain:"SP" },
+  { q:"When performing a nasal swab on a highly contagious patient, additional PPE should include:",
+    choices:["Only gloves","Only a surgical mask","An N95 respirator plus face shield, mask, and gown","Only a gown"],
+    answer:2, domain:"SP" },
+  { q:"When explaining a nasal swab to a patient, you should warn them that:",
+    choices:["It will not feel like anything","Their eyes may tear up","It will take 30 minutes","They should hold their breath for 2 minutes"],
+    answer:1, domain:"SP" },
+  { q:"Wound cultures should be collected:",
+    choices:["Without PPE if the wound is small","Aseptically, with all recommended PPE, to avoid cross contamination","After rinsing the wound with tap water","Only after bandage removal by the patient"],
+    answer:1, domain:"SP" },
+  { q:"Opening a swab for a nasal culture, the phlebotomist should:",
+    choices:["Touch the end to confirm it is dry","Avoid touching the end of the swab to prevent cross contamination","Rinse the swab in alcohol","Pre-dip in saline"],
+    answer:1, domain:"SP" },
+  { q:"Before transporting a swab specimen, the phlebotomist must:",
+    choices:["Mail it immediately","Compare the label to the patient's wristband and requisition","Open the container to inspect","Shake the transport medium"],
+    answer:1, domain:"SP" },
+
+  // ========== PROCESSING (PR) — Photosensitivity, LIS, POCT, critical values ==========
+  { q:"After 1 hour of light exposure, a bilirubin specimen can lose approximately what percentage of its bilirubin?",
+    choices:["5%","10%","50%","100%"],
+    answer:2, domain:"PR" },
+  { q:"Acceptable ways to protect a photosensitive specimen during transport include all of the following EXCEPT:",
+    choices:["Aluminum foil","Amber tubes","Biohazard bags","A clear glass vial on the window sill"],
+    answer:3, domain:"PR" },
+  { q:"In clinical research, the FIRST critical specimen-handling step is:",
+    choices:["Billing codes","Tube processing (correct order of draw, correct additive, correct volume)","Writing the lab report","Setting up the centrifuge"],
+    answer:1, domain:"PR" },
+  { q:"When shipping research specimens, the document that serves as both shipping label and tracking form is the:",
+    choices:["Chain of custody","Air waybill","Requisition slip","Delivery receipt"],
+    answer:1, domain:"PR" },
+  { q:"The main purpose of a Laboratory Information System (LIS) is to:",
+    choices:["Replace phlebotomists","Automate ordering, tracking, result reporting, and billing in the lab","Measure room temperature","Clean lab equipment"],
+    answer:1, domain:"PR" },
+  { q:"Benefits of using an LIS include all of the following EXCEPT:",
+    choices:["Quicker turnaround time","Decreased clerical and billing errors","Flexible delivery options for reports","Elimination of the need for patient identifiers"],
+    answer:3, domain:"PR" },
+  { q:"An LIS mnemonic label that reads '5 mL LAV' tells the phlebotomist to collect:",
+    choices:["5 mL of blood in a lavender tube","5 liters of lavender dye","A 5-minute collection","5 vials of blood"],
+    answer:0, domain:"PR" },
+  { q:"In the LIS specimen workflow, barcode scanning is used to:",
+    choices:["Order the test","Verify collection and receipt of the specimen","Print the report","Bill the patient"],
+    answer:1, domain:"PR" },
+  { q:"Point-of-care testing (POCT) is also known as:",
+    choices:["Automated reference-lab testing","Alternate site testing, bedside testing, or near-patient testing","Blood-bank testing","Research-only testing"],
+    answer:1, domain:"PR" },
+  { q:"If a POCT is NOT a CLIA-waived test, a certified phlebotomist should:",
+    choices:["Perform it only once","Not perform that test","Perform it under supervision","Perform only the first step"],
+    answer:1, domain:"PR" },
+  { q:"When verbally reporting a critical value, the phlebotomist must:",
+    choices:["Report quickly without confirming receipt","Ensure the recipient is authorized, have them record the value, and read it back to confirm","Email the result only","Leave a voicemail"],
+    answer:1, domain:"PR" },
+  { q:"The 'read-back' process when reporting critical values is used to:",
+    choices:["Save time","Confirm the accuracy of information that was written down","Complete billing","Alert the patient"],
+    answer:1, domain:"PR" },
+  { q:"After providing a verbal report of a critical value, it should be supplemented with:",
+    choices:["A handwritten note","An electronic or printed copy of the full report for the official record","A text message","Nothing — verbal is sufficient"],
+    answer:1, domain:"PR" },
+  { q:"When a specimen must be recollected, the phlebotomist should communicate with the patient by:",
+    choices:["Avoiding mention of the first draw's failure","Being honest, offering empathy, and explaining the importance of the redraw","Delaying the redraw a day to let the patient recover","Sending the patient home for the day"],
+    answer:1, domain:"PR" },
+];
+
+const TARGET_COUNT = 25;
+const HISTORY_KEY = 'nhaCpt4thHistory';
+const CURRENT_KEY = 'nhaCpt4thCurrent';
+
+const main = document.getElementById('main');
+const newBtn = document.getElementById('newBtn');
+const submitBtn = document.getElementById('submitBtn');
+const revealBtn = document.getElementById('revealBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const historyBtn = document.getElementById('historyBtn');
+const progressEl = document.getElementById('progress');
+const testIdLabel = document.getElementById('testIdLabel');
+
+let currentTest = null;
+
+function uuid() {
+  const d = new Date();
+  const pad = (n, l=2) => String(n).padStart(l, '0');
+  return `X${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}-${Math.random().toString(36).slice(2,6)}`;
+}
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function pickRandom(n) {
+  const take = Math.min(n, QUESTIONS.length);
+  return shuffle(QUESTIONS).slice(0, take);
+}
+
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveHistory(list) {
+  const capped = list.slice(0, 50);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(capped));
+}
+function upsertHistory(test) {
+  const list = loadHistory();
+  const idx = list.findIndex(t => t.id === test.id);
+  if (idx >= 0) list[idx] = test;
+  else list.unshift(test);
+  saveHistory(list);
+}
+function saveCurrent() {
+  if (currentTest) localStorage.setItem(CURRENT_KEY, JSON.stringify(currentTest));
+}
+function loadCurrent() {
+  try { return JSON.parse(localStorage.getItem(CURRENT_KEY) || 'null'); }
+  catch { return null; }
+}
+
+function domainName(code) {
+  return {
+    SC: "Safety & Compliance",
+    PP: "Patient Prep",
+    RC: "Routine Collections",
+    SP: "Special Collections",
+    PR: "Processing"
+  }[code] || code;
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function renderTest(readOnly=false) {
+  if (!currentTest) {
+    main.innerHTML = '<div class="empty">Click <b>New Test</b> to begin a 25-question practice set.</div>';
+    testIdLabel.textContent = '';
+    return;
+  }
+  const scoreHtml = currentTest.graded ? renderScoreCard(currentTest) : '';
+  let html = scoreHtml;
+  currentTest.questions.forEach((item, idx) => {
+    const userAns = currentTest.answers[idx];
+    html += `<div class="question" data-idx="${idx}">
+      <div class="q-header">
+        <div class="q-num">${idx + 1}.</div>
+        <div class="q-text">${escapeHtml(item.q)}</div>
+      </div>
+      <div class="options">
+        ${item.choices.map((c, i) => {
+          const checked = userAns === i ? 'checked' : '';
+          const disabled = (readOnly || currentTest.graded) ? 'disabled' : '';
+          let cls = 'option';
+          if (currentTest.graded) {
+            if (i === item.answer && i === userAns) cls += ' correct';
+            else if (i === item.answer) cls += ' correct-missed';
+            else if (i === userAns) cls += ' wrong';
+          }
+          return `<label class="${cls}" data-choice="${i}">
+            <input type="radio" name="q${idx}" value="${i}" ${checked} ${disabled}>
+            <b>${String.fromCharCode(65 + i)}.</b> ${escapeHtml(c)}
+          </label>`;
+        }).join('')}
+      </div>
+      <div class="domain">Domain: ${domainName(item.domain)}${
+        currentTest.graded
+          ? ` &middot; ${userAns === item.answer ? '<span style="color:#1e8449;font-weight:700;">Correct</span>' : (userAns == null ? '<span style="color:#6b7280;font-weight:700;">Skipped</span>' : '<span style="color:#c0392b;font-weight:700;">Incorrect</span>')}`
+          : ''
+      }</div>
+    </div>`;
+  });
+  main.innerHTML = html;
+  updateProgress();
+  main.querySelectorAll('input[type="radio"]').forEach(r => {
+    r.addEventListener('change', (e) => {
+      const name = e.target.name;
+      const idx = parseInt(name.slice(1), 10);
+      currentTest.answers[idx] = parseInt(e.target.value, 10);
+      saveCurrent();
+      updateProgress();
+    });
+  });
+  testIdLabel.textContent = `Test ID: ${currentTest.id} • ${new Date(currentTest.timestamp).toLocaleString()}`;
+}
+
+function renderScoreCard(t) {
+  const domainStats = {};
+  t.questions.forEach((item, idx) => {
+    if (!domainStats[item.domain]) domainStats[item.domain] = { right: 0, total: 0 };
+    domainStats[item.domain].total++;
+    if (t.answers[idx] === item.answer) domainStats[item.domain].right++;
+  });
+  const pass = t.pct >= 75;
+  return `
+    <div class="score-card">
+      <div style="font-size:14px; opacity:0.85;">YOUR SCORE</div>
+      <div class="big ${pass ? 'pass' : 'fail'}">${t.score} / ${t.total} &nbsp; (${t.pct}%)</div>
+      <div>${pass ? 'Pass — keep practicing!' : 'Below 75% — review the missed items.'}</div>
+      <div class="domain-breakdown">
+        ${Object.entries(domainStats).map(([d, s]) => `
+          <div class="domain-stat">
+            <div>${domainName(d)}</div>
+            <div class="num">${s.right}/${s.total}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>`;
+}
+
+function updateProgress() {
+  if (!currentTest) { progressEl.textContent = ''; return; }
+  const answered = currentTest.answers.filter(a => a != null).length;
+  if (currentTest.graded) {
+    progressEl.textContent = `Graded: ${currentTest.score}/${currentTest.total} (${currentTest.pct}%)`;
+  } else {
+    progressEl.textContent = `Answered ${answered} / ${currentTest.total}`;
+  }
+}
+
+function startNewTest() {
+  const picked = pickRandom(TARGET_COUNT);
+  currentTest = {
+    id: uuid(),
+    timestamp: Date.now(),
+    questions: picked,
+    answers: picked.map(() => null),
+    graded: false,
+    score: 0,
+    total: picked.length,
+    pct: 0
+  };
+  saveCurrent();
+  upsertHistory(currentTest);
+  renderTest();
+  revealBtn.disabled = true;
+  submitBtn.disabled = false;
+  downloadBtn.disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function gradeCurrent() {
+  if (!currentTest) return;
+  let correct = 0;
+  currentTest.questions.forEach((item, idx) => {
+    if (currentTest.answers[idx] === item.answer) correct++;
+  });
+  currentTest.score = correct;
+  currentTest.pct = Math.round((correct / currentTest.total) * 100);
+  currentTest.graded = true;
+  saveCurrent();
+  upsertHistory(currentTest);
+  renderTest();
+  submitBtn.disabled = true;
+  revealBtn.disabled = false;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showAnswerKey() {
+  if (!currentTest) return;
+  let html = '<div class="score-card"><div style="font-size:18px; font-weight:700;">Answer Key</div></div>';
+  html += '<ol style="line-height:1.8;">';
+  currentTest.questions.forEach(item => {
+    const letter = String.fromCharCode(65 + item.answer);
+    html += `<li style="margin-bottom:10px;"><b>${escapeHtml(item.q)}</b><br>
+      <span style="color:#1e8449;"><b>Answer: ${letter}.</b> ${escapeHtml(item.choices[item.answer])}</span>
+      <div class="domain" style="margin-left:0;">Domain: ${domainName(item.domain)}</div></li>`;
+  });
+  html += '</ol>';
+  html += '<button class="secondary" onclick="renderTest()">← Back to test view</button>';
+  main.innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function downloadTest(test) {
+  if (!test) return;
+  const ts = new Date(test.timestamp);
+  const header = `NHA CPT 4th Practice Test\nTest ID: ${test.id}\nStarted: ${ts.toLocaleString()}\nStatus: ${test.graded ? `Graded ${test.score}/${test.total} (${test.pct}%)` : 'Not graded'}\n\n`;
+  const body = test.questions.map((item, idx) => {
+    const letters = ['A','B','C','D','E','F'];
+    const choices = item.choices.map((c, i) => `  ${letters[i]}. ${c}`).join('\n');
+    const yourAns = test.answers[idx] != null ? letters[test.answers[idx]] : '(skipped)';
+    const correctAns = letters[item.answer];
+    const mark = test.graded ? (test.answers[idx] === item.answer ? '[Correct]' : '[Incorrect]') : '';
+    return `Q${idx+1} [${domainName(item.domain)}] ${mark}\n${item.q}\n${choices}\nYour answer: ${yourAns}\nCorrect answer: ${correctAns}. ${item.choices[item.answer]}\n`;
+  }).join('\n');
+  const blob = new Blob([header + body], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${test.id}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function renderHistory() {
+  const list = loadHistory();
+  if (!list.length) {
+    main.innerHTML = `<h2 style="margin-top:0;">Past Tests</h2>
+      <div class="empty">No past tests yet. Click <b>New Test</b> to begin.</div>
+      <button class="secondary" onclick="renderTest()">← Back</button>`;
+    return;
+  }
+  let html = `<h2 style="margin-top:0;">Past Tests <span style="font-size:13px; color:#6b7280; font-weight:400;">(${list.length} saved)</span></h2>`;
+  html += '<ul class="history-list">';
+  list.forEach(t => {
+    const ts = new Date(t.timestamp);
+    let scoreCls = 'ungraded';
+    let scoreTxt = 'Not graded';
+    if (t.graded) {
+      scoreCls = t.pct >= 75 ? 'pass' : 'fail';
+      scoreTxt = `${t.score}/${t.total} (${t.pct}%)`;
+    }
+    html += `<li class="history-item">
+      <div>
+        <div class="hi-title">${escapeHtml(t.id)}</div>
+        <div class="hi-meta">${ts.toLocaleString()} &middot; ${t.total} questions</div>
+      </div>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <span class="hi-score ${scoreCls}">${scoreTxt}</span>
+        <div class="history-actions">
+          <button class="secondary" data-act="open" data-id="${t.id}">Open</button>
+          <button class="ghost" data-act="download" data-id="${t.id}">Download</button>
+          <button class="ghost" data-act="delete" data-id="${t.id}" style="color:#c0392b; border-color:#c0392b;">Delete</button>
+        </div>
+      </div>
+    </li>`;
+  });
+  html += '</ul>';
+  html += '<div style="margin-top:16px;"><button class="secondary" id="historyBack">← Back to current test</button> <button class="ghost" id="historyClear" style="color:#c0392b; border-color:#c0392b;">Clear all history</button></div>';
+  main.innerHTML = html;
+
+  main.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.id;
+      const list = loadHistory();
+      const t = list.find(x => x.id === id);
+      if (!t) return;
+      if (btn.dataset.act === 'open') {
+        currentTest = t;
+        saveCurrent();
+        renderTest();
+        submitBtn.disabled = t.graded;
+        revealBtn.disabled = false;
+        downloadBtn.disabled = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (btn.dataset.act === 'download') {
+        downloadTest(t);
+      } else if (btn.dataset.act === 'delete') {
+        if (!confirm(`Delete test ${id}?`)) return;
+        const newList = list.filter(x => x.id !== id);
+        saveHistory(newList);
+        renderHistory();
+      }
+    });
+  });
+  document.getElementById('historyBack').addEventListener('click', renderTest);
+  document.getElementById('historyClear').addEventListener('click', () => {
+    if (!confirm('Delete ALL saved past tests? This cannot be undone.')) return;
+    saveHistory([]);
+    renderHistory();
+  });
+}
+
+newBtn.addEventListener('click', () => {
+  if (currentTest && !currentTest.graded && currentTest.answers.some(a => a != null)) {
+    if (!confirm('Start a new test? Your current unsaved answers will be lost (the test will still appear in Past Tests).')) return;
+  }
+  startNewTest();
+});
+
+submitBtn.addEventListener('click', () => {
+  if (!currentTest) { alert('Click "New Test" to start first.'); return; }
+  if (currentTest.graded) return;
+  const answered = currentTest.answers.filter(a => a != null).length;
+  if (answered < currentTest.total) {
+    if (!confirm(`You answered ${answered} of ${currentTest.total}. Grade anyway?`)) return;
+  }
+  gradeCurrent();
+});
+
+revealBtn.addEventListener('click', showAnswerKey);
+downloadBtn.addEventListener('click', () => downloadTest(currentTest));
+historyBtn.addEventListener('click', renderHistory);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const saved = loadCurrent();
+  if (saved && saved.id) {
+    currentTest = saved;
+    renderTest();
+    submitBtn.disabled = currentTest.graded;
+    revealBtn.disabled = !currentTest.graded;
+    downloadBtn.disabled = false;
+  }
+  const history = loadHistory();
+  if (history.length) {
+    const past = history.length;
+    const extra = currentTest ? '' : ` — click Past Tests to review.`;
+    progressEl.textContent = `${past} saved test${past === 1 ? '' : 's'} in history${extra}`;
+    if (currentTest) updateProgress();
+  }
+});
+</script>
+</body>
+</html>
