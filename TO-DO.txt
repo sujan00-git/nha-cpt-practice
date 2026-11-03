@@ -1,6 +1,5 @@
 ==============================================================
-HOW TO ADD A NEW PERSONALIZED SUBSECTION
-NHA CPT Practice project
+NHA CPT PRACTICE — HOW TO ADD CONTENT
 ==============================================================
 
 Project location:  /home/mrahman/claude/projects/nh-cpt-practice/
@@ -8,90 +7,156 @@ GitHub repo:       https://github.com/sujan00-git/nha-cpt-practice
 Live site:         https://sujan00-git.github.io/nha-cpt-practice/
 Windows path:      \\wsl.localhost\Ubuntu-22.04\home\mrahman\claude\projects\nh-cpt-practice
 
---------------------------------------------------------------
-STEP 1 — Add your new image(s)
---------------------------------------------------------------
-Drop your new study image(s) into:
+There are TWO workflows depending on what you have:
+  (A) PDFs  → auto-generated MCQ test page
+  (B) Study images → personalized question subsection
 
-    Phlebotomy_questions/
+==============================================================
+WORKFLOW A — ADD A NEW PDF-BASED PRACTICE TEST
+==============================================================
 
-Give the files descriptive names, e.g.:
-    urinalysis_chart.jpeg
-    veins_anatomy.jpeg
-    safety_poster.jpeg
+Pattern established by: baseline, final, 4th practice tests.
 
---------------------------------------------------------------
-STEP 2 — Open a new Claude Code conversation
---------------------------------------------------------------
-From your terminal, run:
+STEP 1 — Create a new folder with the PDFs
+  practice-test-<name>/
+    *.pdf
 
-    cd /home/mrahman/claude/projects/nh-cpt-practice
-    claude
+STEP 2 — Open Claude in the project
+  cd /home/mrahman/claude/projects/nh-cpt-practice
+  claude
 
---------------------------------------------------------------
-STEP 3 — Paste this prompt (edit the [bracketed] parts)
---------------------------------------------------------------
+STEP 3 — Paste this prompt (edit [bracketed] parts)
 
-    In my project at /home/mrahman/claude/projects/nh-cpt-practice/,
-    add a new personalized subsection called "[Topic Name]" using
-    these new images I added to Phlebotomy_questions/:
-    [filename1.jpeg, filename2.jpeg].
+  i added a new folder "practice-test-[name]/" with PDFs.
+  Please build a new practice-test page from these PDFs, same
+  pattern as baseline/final/4th. Target ~150 questions, 25 per
+  test, with Past Tests history and download, linked from
+  index.html with a back-to-index button. Push to GitHub when done.
 
-    Analyze each image and generate questions in the same style
-    as the existing personalized section pages. Update the sidebar
-    TOC on all personalized pages, add a card to the index.html,
-    then commit and push.
-
---------------------------------------------------------------
 WHAT CLAUDE WILL DO AUTOMATICALLY
---------------------------------------------------------------
-Claude already has this project in its memory, so it will:
+  1. Extract text from each PDF (pypdf in a venv at /tmp/pdf-extract/)
+  2. Identify unique facts across the 5 NHA CPT domains:
+       SC = Safety & Compliance
+       PP = Patient Prep
+       RC = Routine Collections
+       SP = Special Collections
+       PR = Processing
+  3. Write a question bank (target 150 MCQs, 4 choices each).
+     Mix should roughly reflect the PDF content coverage.
+  4. Create <name>_practice_test.html cloned from baseline:
+       - 25 random questions per run
+       - Submit & Grade with per-domain breakdown and pass/fail at 75%
+       - Show Answer Key view
+       - Download Test (.txt) with questions, your answers, correct answers
+       - Past Tests history saved to localStorage (independent per page,
+         keyed as nhaCpt<Name>History / nhaCpt<Name>Current)
+       - "← Back to Index" link in header
+       - A UNIQUE theme color so pages are visually distinct
+         (used so far: blue, green, purple, orange — pick a new one)
+  5. Update index.html:
+       - Add a new card under "Full-Length Random Practice"
+       - Add a new stat tile with the bank size
+  6. Commit (as sujan00-git) and push to origin/main
+  7. GitHub Pages redeploys in about 1 minute
 
-  1. Read each new image to understand its content.
-  2. Generate ~20-30 appropriate questions
-     (multiple choice, or fill-in-the-blank for diagrams).
-  3. Create a new file:
-         personalized_test_<topic>.html
-     cloned from the existing section pages (same look + layout).
-  4. Update the sidebar TOC on EVERY personalized page
-     (so the new section appears in the left menu everywhere).
-  5. Add a matching card to index.html under
-     "Personalized Test — By Section".
+VALIDATION CLAUDE SHOULD RUN BEFORE PUSHING
+  node -e "..." against the bank:
+    - total count
+    - per-domain mix
+    - no bad entries (4 choices, answer 0-3, domain set)
+    - no duplicate question text
+  Smoke-test the <script> with a jsdom stub.
+
+GIT IDENTITY (prior commits used this; no global config set)
+  git -c user.name='sujan00-git' \
+      -c user.email='sujan00-git@users.noreply.github.com' \
+      commit -m "..."
+
+NAMING CONVENTIONS
+  Folder:  practice-test-<name>/
+  Page:    <name>_practice_test.html
+  Keys:    nhaCpt<Name>History / nhaCpt<Name>Current
+  Theme:   unique CSS primary color + matching card gradient
+
+NOTES ABOUT PDF CONTENT
+  - If the folder has <ADS Zone.Identifier> sidecar files (from Windows),
+    do NOT commit them. Stage only the .pdf files explicitly.
+  - If the content overlaps heavily with the baseline PDFs, Claude will
+    still write a complete bank for that page so it stands alone. Each
+    page has its own history/download, so no cross-page interference.
+
+==============================================================
+WORKFLOW B — ADD A NEW PERSONALIZED SUBSECTION (STUDY IMAGE)
+==============================================================
+
+STEP 1 — Add your new image(s) to:
+  Phlebotomy_questions/
+    (e.g. urinalysis_chart.jpeg, veins_anatomy.jpeg)
+
+STEP 2 — Open Claude:
+  cd /home/mrahman/claude/projects/nh-cpt-practice
+  claude
+
+STEP 3 — Paste this prompt (edit [bracketed] parts)
+
+  In my project at /home/mrahman/claude/projects/nh-cpt-practice/,
+  add a new personalized subsection called "[Topic Name]" using
+  these new images I added to Phlebotomy_questions/:
+  [filename1.jpeg, filename2.jpeg].
+
+  Analyze each image and generate questions in the same style
+  as the existing personalized section pages. Update the sidebar
+  TOC on all personalized pages, add a card to the index.html,
+  then commit and push.
+
+WHAT CLAUDE WILL DO
+  1. Read each new image and derive the content.
+  2. Generate ~20-30 appropriate MCQs (or fill-in for diagrams).
+  3. Create personalized_test_<topic>.html cloned from an existing
+     section page.
+  4. Update the sidebar TOC on EVERY personalized page.
+  5. Add a card to index.html under "Personalized Test — By Section".
   6. git commit + git push to origin/main.
-  7. GitHub Pages auto-redeploys in about 1 minute,
-     and the new section is live at:
-         https://sujan00-git.github.io/nha-cpt-practice/
 
---------------------------------------------------------------
-CURRENT PAGE STRUCTURE
---------------------------------------------------------------
-  index.html                                — hub
-  nha-cpt-practice1.html                    — Randomized Test (Page 1)
-  personalized_test_blood_collection.html   — 34 Qs
-  personalized_test_blood_tests.html        — 31 Qs
-  personalized_test_heart.html              — 8 labels + 25 blanks
-  personalized_test.html                    — All-in-One (all 3 sections)
-  Phlebotomy_questions/                     — study images
-  TO-DO.txt                                 — this file
+==============================================================
+CURRENT PAGE INVENTORY
+==============================================================
 
---------------------------------------------------------------
-NAMING CONVENTIONS CLAUDE WILL FOLLOW
---------------------------------------------------------------
-  File:    personalized_test_<topic>.html
-           (e.g., personalized_test_urinalysis.html)
-  Title:   "Personalized Test - <Topic Name>"
-           (e.g., "Personalized Test - Urinalysis")
+Index hub:
+  index.html
 
---------------------------------------------------------------
-IF YOU WANT TO RUN IT YOURSELF (no AI)
---------------------------------------------------------------
-Clone any existing personalized_test_*.html, then:
-  - Change the <title> and header h1 to the new topic.
-  - Replace the <img> src(s) with your new image filenames.
-  - Replace the QUESTIONS array with your own questions.
-  - Add the new link to the sidebar <nav> in ALL personalized_test_*.html files.
-  - Add a new card to index.html under the "Personalized Test" group.
-  - git add . && git commit -m "Add <topic> section" && git push
+Randomized full-length bank:
+  nha-cpt-practice1.html                     — 1,127 Q bank, 20 Qs/run
+
+PDF-based test pages (Workflow A):
+  baseline_practice_test.html                — 181 Qs from practice-test-baseline/
+  final_practice_test.html                   — 150 Qs from practice-test-final/
+  fourth_practice_test.html                  — 150 Qs from practice-test-4th/
+
+Personalized subsections (Workflow B):
+  personalized_test_blood_collection.html    — 34 Qs
+  personalized_test_blood_tests.html         — 31 Qs
+  personalized_test_heart.html               — 8 labels + 25 blanks
+  personalized_test.html                     — All-in-one combined
+
+Source material:
+  practice-test-baseline/                    — 20 Focused-Review PDFs
+  practice-test-final/                       — 4 Focused-Review PDFs
+  practice-test-4th/                         — 11 Focused-Review PDFs
+  Phlebotomy_questions/                      — study images
+
+==============================================================
+IF YOU WANT TO RUN IT YOURSELF (NO AI)
+==============================================================
+
+Workflow A (new PDF-based test):
+  1. Clone an existing baseline/final/4th page.
+  2. Change the <title>, header, theme color variables, localStorage keys.
+  3. Replace the QUESTIONS array with your own bank.
+  4. Add a card and stat to index.html.
+  5. git add . && git commit -m "Add <name> test" && git push
+
+Workflow B (new personalized section): see the per-page template.
 
 ==============================================================
 END OF TO-DO.txt
