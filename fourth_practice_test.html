@@ -149,6 +149,37 @@
   .history-item .hi-score.ungraded { background: #e5e7eb; color: #4b5563; }
   .history-actions { display: flex; gap: 6px; }
   .history-actions button { padding: 6px 10px; font-size: 12px; }
+  .coverage {
+    padding: 10px 24px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .coverage .cov-text { flex: 1; }
+  .coverage .cov-text strong { color: #222; }
+  .coverage.done {
+    background: #fdece6;
+    color: #a1300d;
+    border-bottom-color: #ffd9c2;
+    font-size: 14px;
+  }
+  .coverage.done .cov-text strong { color: #a1300d; }
+  .coverage .link-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    text-decoration: underline;
+    padding: 0;
+    font-size: inherit;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .coverage .link-btn:hover { background: none; opacity: 0.8; }
 </style>
 </head>
 <body>
@@ -173,6 +204,7 @@
     <button id="importBtn" class="ghost">Import</button>
     <span class="progress" id="progress"></span>
   </div>
+  <div id="coverage" class="coverage"></div>
   <main id="main">
     <div class="empty">Click <b>New Test</b> to begin a 25-question practice set.</div>
   </main>
@@ -671,6 +703,7 @@ const QUESTIONS = [
 const TARGET_COUNT = 25;
 const HISTORY_KEY = 'nhaCpt4thHistory';
 const CURRENT_KEY = 'nhaCpt4thCurrent';
+const SEEN_KEY = 'nhaCpt4thSeen';
 const HISTORY_FILE = 'tests-history/fourth-history.json';
 const EXPORT_FILENAME = 'fourth-history.json';
 
@@ -683,6 +716,7 @@ const historyBtn = document.getElementById('historyBtn');
 const exportBtn = document.getElementById('exportBtn');
 const importBtn = document.getElementById('importBtn');
 const progressEl = document.getElementById('progress');
+const coverageEl = document.getElementById('coverage');
 const testIdLabel = document.getElementById('testIdLabel');
 
 let currentTest = null;
@@ -702,9 +736,73 @@ function shuffle(arr) {
   return a;
 }
 
+function hashQ(text) {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) {
+    h ^= text.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(36);
+}
+
+function loadSeen() {
+  try { return new Set(JSON.parse(localStorage.getItem(SEEN_KEY) || '[]')); }
+  catch { return new Set(); }
+}
+function saveSeen(set) {
+  localStorage.setItem(SEEN_KEY, JSON.stringify(Array.from(set)));
+}
+function markSeen(questions) {
+  const s = loadSeen();
+  questions.forEach(q => s.add(hashQ(q.q)));
+  saveSeen(s);
+}
+
+function getCoverage() {
+  const bankSet = new Set(QUESTIONS.map(q => hashQ(q.q)));
+  const seen = loadSeen();
+  let seenInBank = 0;
+  seen.forEach(h => { if (bankSet.has(h)) seenInBank++; });
+  const total = QUESTIONS.length;
+  return { seen: seenInBank, total, remaining: Math.max(0, total - seenInBank), done: seenInBank >= total };
+}
+
+function renderCoverage() {
+  const c = getCoverage();
+  if (c.done) {
+    coverageEl.className = 'coverage done';
+    coverageEl.innerHTML = `
+      <div class="cov-text">
+        <strong>Completed!</strong> You've seen all <strong>${c.total}</strong> questions in this bank — great work.
+      </div>
+      <button class="link-btn" id="resetCovBtn">Reset coverage</button>`;
+  } else {
+    coverageEl.className = 'coverage';
+    const pct = Math.round(100 * c.seen / c.total);
+    coverageEl.innerHTML = `
+      <div class="cov-text">
+        Progress: <strong>${c.seen}</strong> of <strong>${c.total}</strong> questions seen (${pct}%) &middot; <strong>${c.remaining}</strong> remaining
+      </div>
+      <button class="link-btn" id="resetCovBtn">Reset</button>`;
+  }
+  const btn = document.getElementById('resetCovBtn');
+  if (btn) btn.addEventListener('click', () => {
+    if (!confirm('Reset question coverage? Past Tests are kept — this only clears the "seen" tracker so you can go through all questions fresh.')) return;
+    saveSeen(new Set());
+    renderCoverage();
+  });
+}
+
 function pickRandom(n) {
   const take = Math.min(n, QUESTIONS.length);
-  return shuffle(QUESTIONS).slice(0, take);
+  const seen = loadSeen();
+  const unseen = QUESTIONS.filter(q => !seen.has(hashQ(q.q)));
+  const already = QUESTIONS.filter(q => seen.has(hashQ(q.q)));
+  const picked = shuffle(unseen).slice(0, take);
+  if (picked.length < take) {
+    picked.push(...shuffle(already).slice(0, take - picked.length));
+  }
+  return shuffle(picked);
 }
 
 function loadHistory() {
@@ -836,6 +934,8 @@ function updateProgress() {
 
 function startNewTest() {
   const picked = pickRandom(TARGET_COUNT);
+  markSeen(picked);
+  renderCoverage();
   currentTest = {
     id: uuid(),
     timestamp: Date.now(),
@@ -1075,6 +1175,7 @@ importBtn.addEventListener('click', importHistoryFile);
 
 document.addEventListener('DOMContentLoaded', async () => {
   await tryLoadFromGit();
+  renderCoverage();
   const saved = loadCurrent();
   if (saved && saved.id) {
     currentTest = saved;
