@@ -119,6 +119,39 @@ WHAT CLAUDE WILL DO
   6. git commit + git push to origin/main.
 
 ==============================================================
+TEST HISTORY — SAVE / RESTORE VIA GIT
+==============================================================
+
+Each PDF-based test page saves every test you take to the browser's
+localStorage automatically ("Past Tests" button). To make that history
+survive clearing the browser or moving to another device, use the
+tests-history/ folder in the repo.
+
+Workflow:
+  1. Take tests in the browser as usual.
+  2. Click "Export All" on the test page — downloads <page>-history.json
+  3. Drop the file into tests-history/ with the matching name:
+       baseline-history.json  (for baseline_practice_test.html)
+       final-history.json     (for final_practice_test.html)
+       fourth-history.json    (for fourth_practice_test.html)
+  4. git add tests-history/ && git commit && git push
+  5. On any device, open the live site. The page auto-fetches the
+     committed JSON and merges it into Past Tests.
+
+Merge rules on each page load:
+  - Same test id → the record with the newer timestamp wins
+  - A graded record wins over an ungraded one with the same id
+  - Everything else is appended
+
+Manual Import: use the "Import" button to load a .json picked from disk.
+
+See tests-history/README.md for the file format.
+
+Adding a NEW PDF-based test page: also create
+  tests-history/<name>-history.json  (initial contents: [])
+and define HISTORY_FILE + EXPORT_FILENAME in the page's script.
+
+==============================================================
 CURRENT PAGE INVENTORY
 ==============================================================
 

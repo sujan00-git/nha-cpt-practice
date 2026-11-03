@@ -242,6 +242,8 @@
     <button id="revealBtn" class="secondary" disabled>Show Answer Key</button>
     <button id="downloadBtn" class="ghost" disabled>Download Test</button>
     <button id="historyBtn" class="ghost">Past Tests</button>
+    <button id="exportBtn" class="ghost">Export All</button>
+    <button id="importBtn" class="ghost">Import</button>
     <span class="progress" id="progress"></span>
   </div>
   <main id="main">
@@ -815,6 +817,8 @@ const QUESTIONS = [
 const TARGET_COUNT = 25;
 const HISTORY_KEY = 'nhaCptBaselineHistory';
 const CURRENT_KEY = 'nhaCptBaselineCurrent';
+const HISTORY_FILE = 'tests-history/baseline-history.json';
+const EXPORT_FILENAME = 'baseline-history.json';
 
 const main = document.getElementById('main');
 const newBtn = document.getElementById('newBtn');
@@ -822,6 +826,8 @@ const submitBtn = document.getElementById('submitBtn');
 const revealBtn = document.getElementById('revealBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const historyBtn = document.getElementById('historyBtn');
+const exportBtn = document.getElementById('exportBtn');
+const importBtn = document.getElementById('importBtn');
 const progressEl = document.getElementById('progress');
 const testIdLabel = document.getElementById('testIdLabel');
 
@@ -1146,7 +1152,81 @@ revealBtn.addEventListener('click', showAnswerKey);
 downloadBtn.addEventListener('click', () => downloadTest(currentTest));
 historyBtn.addEventListener('click', renderHistory);
 
-document.addEventListener('DOMContentLoaded', () => {
+function mergeHistory(incoming) {
+  if (!Array.isArray(incoming)) return 0;
+  const existing = loadHistory();
+  const map = new Map();
+  // Prefer whichever record for the same id is newer (or graded over ungraded)
+  const upsert = (t) => {
+    if (!t || !t.id) return;
+    const prev = map.get(t.id);
+    if (!prev) { map.set(t.id, t); return; }
+    const newer = (t.timestamp || 0) >= (prev.timestamp || 0);
+    const upgradeToGraded = t.graded && !prev.graded;
+    if (upgradeToGraded || newer) map.set(t.id, t);
+  };
+  existing.forEach(upsert);
+  let added = 0;
+  incoming.forEach(t => {
+    const prev = map.get(t && t.id);
+    upsert(t);
+    if (map.get(t.id) !== prev) added++;
+  });
+  const merged = Array.from(map.values()).sort((a,b) => (b.timestamp||0) - (a.timestamp||0));
+  saveHistory(merged);
+  return added;
+}
+
+function exportAll() {
+  const list = loadHistory();
+  if (!list.length) { alert('No history to export yet. Take a test first.'); return; }
+  const blob = new Blob([JSON.stringify(list, null, 2)], { type: 'application/json;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = EXPORT_FILENAME;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function importHistoryFile() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json,application/json';
+  input.addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const incoming = JSON.parse(text);
+      if (!Array.isArray(incoming)) { alert('Invalid file: expected an array of tests.'); return; }
+      mergeHistory(incoming);
+      alert(`Imported ${incoming.length} entries. Open Past Tests to review.`);
+      renderHistory();
+    } catch (err) {
+      alert('Import failed: ' + err.message);
+    }
+  });
+  input.click();
+}
+
+async function tryLoadFromGit() {
+  try {
+    const resp = await fetch(HISTORY_FILE, { cache: 'no-cache' });
+    if (!resp.ok) return 0;
+    const remote = await resp.json();
+    if (!Array.isArray(remote) || !remote.length) return 0;
+    return mergeHistory(remote);
+  } catch (e) {
+    return 0;
+  }
+}
+
+exportBtn.addEventListener('click', exportAll);
+importBtn.addEventListener('click', importHistoryFile);
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await tryLoadFromGit();
   const saved = loadCurrent();
   if (saved && saved.id) {
     currentTest = saved;
